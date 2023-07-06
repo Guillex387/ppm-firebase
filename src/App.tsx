@@ -1,11 +1,14 @@
-import { MantineProvider } from '@mantine/core';
+import { FC } from 'react';
+import { ChakraBaseProvider } from '@chakra-ui/react';
+import theme from './theme';
+import NavBar from './components/NavBar';
 
-function App() {
+const App: FC = () => {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme: 'dark' }}>
-      { /* TODO: validate with a context if the user is auth or not */ }
-    </MantineProvider>
+    <ChakraBaseProvider theme={theme}>
+      <NavBar />
+    </ChakraBaseProvider>
   );
-}
+};
 
 export default App;

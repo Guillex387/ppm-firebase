@@ -1,5 +1,5 @@
 import { AppShell, Header, Navbar } from '@mantine/core';
-import Title from '../components/Title';
+import NavBar from '../components/NavBar';
 
 function MainApp() {
   return (
@@ -7,7 +7,7 @@ function MainApp() {
         padding="md"
         navbar={<Navbar width={{ base: 200 }} p="xs">{/* Navbar content */}</Navbar>}
         header={<Header height={60} p="xs">
-          <Title />
+          <NavBar />
         </Header>}
         styles={(theme) => ({
           main: { backgroundColor: theme.colors.dark[8] }
