@@ -1,25 +1,42 @@
-import { } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { FC, useCallback, useState } from 'react';
+import { Box, Input, Button, Heading, Stack } from '@chakra-ui/react';
+import PasswordInput from '../components/PasswordInput';
 
-const emailRegEx: RegExp = /^\S+@\S+$/;
+const Login: FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-function Login() {
-  const form = useForm({
-    initialValues: {
-      email: '',
-      password: ''
-    },
-    validate: {
-      email: value => emailRegEx.test(value) ? null : 'Invalid email',
-      password: value => value ? null : 'No password has been set'
-    }
-  });
+  const submit = useCallback(() => {
+    console.table({ email, password });
+    setEmail('');
+    setPassword('');
+  }, [email, password]);
 
   return (
-    <>
-      { /* TODO: make the login form */ }
-    </>
+    <Box
+      as={Stack}
+      maxW="md"
+      spacing={4}
+      p={6}
+      borderWidth={1}
+      borderRadius="lg"
+    >
+      <Heading textAlign="center">Login</Heading>
+      <Input
+        variant="outline"
+        placeholder="Enter email"
+        value={email}
+        onChange={(ev) => setEmail(ev.target.value)}
+      />
+      <PasswordInput
+        value={password}
+        onChange={(ev) => setPassword(ev.target.value)}
+      />
+      <Button colorScheme="blue" variant="outline" onClick={submit}>
+        Submit
+      </Button>
+    </Box>
   );
-}
+};
 
 export default Login;
