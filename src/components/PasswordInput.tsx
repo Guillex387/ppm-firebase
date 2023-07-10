@@ -1,18 +1,14 @@
-import { FC, ChangeEventHandler } from 'react';
+import { FC } from 'react';
 import {
   Input,
   InputGroup,
   InputRightElement,
   Button,
   useBoolean,
+  InputProps,
 } from '@chakra-ui/react';
 
-export interface PasswordInputProps {
-  value?: string;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-}
-
-const PasswordInput: FC<PasswordInputProps> = ({ value, onChange }) => {
+const PasswordInput: FC<InputProps> = (props) => {
   const [show, { toggle }] = useBoolean(false);
 
   return (
@@ -20,9 +16,8 @@ const PasswordInput: FC<PasswordInputProps> = ({ value, onChange }) => {
       <Input
         pr="4.5rem"
         type={show ? 'text' : 'password'}
-        value={value}
-        onChange={onChange}
         placeholder="Enter password"
+        {...props}
       />
       <InputRightElement width="4.5rem">
         <Button h="1.75rem" size="sm" onClick={toggle}>

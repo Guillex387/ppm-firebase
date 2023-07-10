@@ -10,12 +10,10 @@ const UserMenu: FC = () => {
     <Menu>
       <MenuButton as={Avatar} size="sm" />
       <MenuList>
-        <MenuItem onClick={onclick}>TODO</MenuItem>
-        <MenuItem onClick={onclick}>TODO</MenuItem>
-        <MenuItem onClick={onclick}>TODO</MenuItem>
-        <MenuItem onClick={onclick}>TODO</MenuItem>
-        <MenuItem onClick={onclick}>TODO</MenuItem>
-        <MenuItem onClick={onclick}>TODO</MenuItem>
+        <MenuItem onClick={onclick}>Manage account</MenuItem>
+        <MenuItem onClick={onclick} color="red.500">
+          Logout
+        </MenuItem>
       </MenuList>
     </Menu>
   );
