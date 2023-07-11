@@ -1,17 +1,16 @@
-import { FC, useCallback } from 'react';
+import { FC, useContext } from 'react';
 import { Avatar, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import AuthContext from '../lib/auth';
 
 const UserMenu: FC = () => {
-  const onclick = useCallback(() => {
-    console.log('You pressed a part of menu');
-  }, []);
+  const { setAuth } = useContext(AuthContext);
 
   return (
     <Menu>
       <MenuButton as={Avatar} size="sm" />
       <MenuList>
-        <MenuItem onClick={onclick}>Manage account</MenuItem>
-        <MenuItem onClick={onclick} color="red.500">
+        <MenuItem>Manage account</MenuItem>
+        <MenuItem onClick={() => setAuth(false)} color="red.500">
           Logout
         </MenuItem>
       </MenuList>

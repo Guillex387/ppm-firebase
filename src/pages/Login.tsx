@@ -1,41 +1,41 @@
-import { FC, useCallback, useState } from 'react';
-import { Box, Input, Button, Heading, Stack } from '@chakra-ui/react';
+import { FC, FormEvent, useCallback, useContext } from 'react';
+import { Input, Button, Heading, Stack, Center } from '@chakra-ui/react';
 import PasswordInput from '../components/PasswordInput';
+import AuthContext from '../lib/auth';
 
 const Login: FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { setAuth } = useContext(AuthContext);
 
-  const submit = useCallback(() => {
-    console.table({ email, password });
-    setEmail('');
-    setPassword('');
-  }, [email, password]);
+  const submit = useCallback(
+    (ev: FormEvent) => {
+      ev.preventDefault();
+      const formData = new FormData(ev.target as HTMLFormElement);
+      const data = Object.fromEntries(formData);
+      console.log(data);
+      setAuth(true);
+    },
+    [setAuth]
+  );
 
   return (
-    <Box
-      as={Stack}
-      maxW="md"
-      spacing={4}
-      p={6}
-      borderWidth={1}
-      borderRadius="lg"
-    >
-      <Heading textAlign="center">Login</Heading>
-      <Input
-        variant="outline"
-        placeholder="Enter email"
-        value={email}
-        onChange={(ev) => setEmail(ev.target.value)}
-      />
-      <PasswordInput
-        value={password}
-        onChange={(ev) => setPassword(ev.target.value)}
-      />
-      <Button colorScheme="blue" variant="outline" onClick={submit}>
-        Submit
-      </Button>
-    </Box>
+    <Center marginTop={20}>
+      <Stack
+        as="form"
+        maxW="md"
+        spacing={4}
+        p={6}
+        borderWidth={1}
+        borderRadius="lg"
+        onSubmit={submit}
+      >
+        <Heading textAlign="center">Login</Heading>
+        <Input name="email" variant="outline" placeholder="Enter email" />
+        <PasswordInput name="password" />
+        <Button type="submit" colorScheme="blue" variant="outline">
+          Submit
+        </Button>
+      </Stack>
+    </Center>
   );
 };
 

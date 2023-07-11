@@ -22,8 +22,10 @@ function scoreColor(score: number): string {
   return colors[Math.floor(score / 25)];
 }
 
-function formatDate(date: Date): string {
-  const timeFormat = Intl.DateTimeFormat('en', { dateStyle: 'short' });
+function formatDate(date: Date, long: boolean = false): string {
+  const timeFormat = Intl.DateTimeFormat('en', {
+    dateStyle: long ? 'full' : 'short',
+  });
   return timeFormat.format(date);
 }
 

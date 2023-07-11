@@ -1,3 +1,13 @@
-// TODO: define an Auth class
+import { createContext } from 'react';
 
-export default '';
+interface AuthContextI {
+  auth: boolean;
+  setAuth: (value: boolean) => void;
+}
+
+const AuthContext = createContext<AuthContextI>({
+  auth: false,
+  setAuth: (value) => {},
+});
+
+export default AuthContext;
