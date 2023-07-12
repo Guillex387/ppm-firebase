@@ -1,13 +1,20 @@
 import { createContext } from 'react';
+import app from './firebase';
+import { getAuth, User } from 'firebase/auth';
 
-interface AuthContextI {
-  auth: boolean;
-  setAuth: (value: boolean) => void;
-}
+// TODO
+// interface AuthContextI {
+//   user?: User;
+//   isAuth: boolean;
+//   setUser: (user: User) => void;
+// }
 
-const AuthContext = createContext<AuthContextI>({
-  auth: false,
-  setAuth: (value) => {},
-});
+const auth = getAuth(app);
 
-export default AuthContext;
+// TODO
+// export const AuthContext = createContext<AuthContextI>({
+//   isAuth: false,
+//   setUser: () => {},
+// });
+
+export default auth;
