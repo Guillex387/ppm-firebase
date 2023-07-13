@@ -1,21 +1,67 @@
-import { FC, FormEvent, useCallback, useContext } from 'react';
-import { Input, Button, Heading, Stack, Center } from '@chakra-ui/react';
+import { FC, FormEvent, useCallback, useContext, useState } from 'react';
+import {
+  Input,
+  Button,
+  Heading,
+  Stack,
+  Center,
+  useToast,
+} from '@chakra-ui/react';
 import PasswordInput from '../components/PasswordInput';
-import AuthContext from '../lib/auth';
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import auth from '../lib/auth';
 
 const Login: FC = () => {
-  const { setAuth } = useContext(AuthContext);
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
 
   const submit = useCallback(
-    (ev: FormEvent) => {
+    async (ev: FormEvent) => {
       ev.preventDefault();
+      setLoading(true);
       const formData = new FormData(ev.target as HTMLFormElement);
-      const data = Object.fromEntries(formData);
-      console.log(data);
-      setAuth(true);
+      const { email, password } = Object.fromEntries(formData);
+      if (email instanceof File || password instanceof File) return;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        toast({
+          title: 'Incorrect email or password',
+          status: 'error',
+          isClosable: true,
+        });
+      }
+      setLoading(false);
     },
-    [setAuth]
+    [toast]
   );
+
+  const forgotPassword = useCallback(async () => {
+    setLoading(true);
+    const email = prompt('Put the email for reset your password');
+    if (!email) {
+      setLoading(false);
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({
+        title: 'Password reset sended',
+        status: 'success',
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error sending the password reset',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  }, [toast]);
 
   return (
     <Center marginTop={20}>
@@ -31,7 +77,23 @@ const Login: FC = () => {
         <Heading textAlign="center">Login</Heading>
         <Input name="email" variant="outline" placeholder="Enter email" />
         <PasswordInput name="password" />
-        <Button type="submit" colorScheme="blue" variant="outline">
+        <Button
+          variant="link"
+          alignSelf="start"
+          size="sm"
+          paddingLeft={2}
+          color="gray.400"
+          isDisabled={loading}
+          onClick={forgotPassword}
+        >
+          Forgot your password?
+        </Button>
+        <Button
+          type="submit"
+          colorScheme="blue"
+          variant="outline"
+          isLoading={loading}
+        >
           Submit
         </Button>
       </Stack>
