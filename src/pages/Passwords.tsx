@@ -10,16 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { FC, useMemo, useState } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
-
-interface Password {
-  id: number;
-  origin: string;
-  email: string;
-  password: string;
-  score: number;
-  createdAt: Date;
-  others?: Object;
-}
+import { Password } from '../lib/db';
 
 function fetchPasswords() {
   const example: Password[] = [
@@ -80,7 +71,7 @@ const Passwords: FC = () => {
         {unLocked ? (
           passwords.map(({ id, origin, score, createdAt }) => (
             <PasswordBlock
-              id={id.toString()}
+              key={id}
               origin={origin}
               score={score}
               createdAt={createdAt}

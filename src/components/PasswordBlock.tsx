@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react';
 
 export interface PasswordBlockProps {
-  id: string;
   origin: string;
   score: number;
   createdAt: Date;
@@ -30,14 +29,12 @@ function formatDate(date: Date, long: boolean = false): string {
 }
 
 const PasswordBlock: FC<PasswordBlockProps> = ({
-  id,
   origin,
   score,
   createdAt,
 }) => {
   return (
     <Flex
-      key={id}
       alignItems="center"
       gap={2}
       w="full"
