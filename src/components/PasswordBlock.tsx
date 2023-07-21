@@ -8,61 +8,64 @@ import {
   Box,
   Button,
   Hide,
+  Collapse,
+  useDisclosure,
+  Divider,
 } from '@chakra-ui/react';
+import { PasswordWithId } from '../lib/db';
+import PasswordData from './PasswordData';
+import { formatDate } from '../utils';
 
 export interface PasswordBlockProps {
-  origin: string;
-  score: number;
-  createdAt: Date;
+  password: PasswordWithId;
 }
 
 function scoreColor(score: number): string {
-  const colors = ['red', 'red', 'orange', 'green'];
+  const colors = ['red', 'red', 'orange', 'green', 'green'];
   return colors[Math.floor(score / 25)];
 }
 
-function formatDate(date: Date, long: boolean = false): string {
-  const timeFormat = Intl.DateTimeFormat('en', {
-    dateStyle: long ? 'full' : 'short',
-  });
-  return timeFormat.format(date);
-}
-
-const PasswordBlock: FC<PasswordBlockProps> = ({
-  origin,
-  score,
-  createdAt,
-}) => {
+const PasswordBlock: FC<PasswordBlockProps> = ({ password }) => {
+  const { isOpen, onToggle } = useDisclosure();
   return (
-    <Flex
-      alignItems="center"
-      gap={2}
-      w="full"
-      p={2}
-      bgColor="gray.700"
-      borderRadius="md"
-    >
-      <Button colorScheme="blue" variant="ghost">
-        {origin}
-      </Button>
-      <Spacer />
-      <Box w="40%" maxW="12em" marginRight="1em">
-        <LightMode>
-          <Progress
-            size="xs"
-            value={score}
-            colorScheme={scoreColor(score)}
-            borderRadius="md"
-            bgColor="gray.800"
-          />
-        </LightMode>
-      </Box>
-      <Hide below="md">
-        <Text as="b" marginRight="1em">
-          {formatDate(createdAt)}
-        </Text>
-      </Hide>
-    </Flex>
+    <Box w="full" p={2} bgColor="gray.700" borderRadius="md">
+      <Flex alignItems="center" gap={2}>
+        <Button colorScheme="blue" variant="ghost" onClick={onToggle}>
+          {password.origin}
+        </Button>
+        <Spacer />
+        <Box w="40%" maxW="12em" marginRight="1em">
+          <LightMode>
+            <Progress
+              size="xs"
+              value={password.score}
+              colorScheme={scoreColor(password.score)}
+              borderRadius="md"
+              bgColor="gray.800"
+            />
+          </LightMode>
+        </Box>
+        <Hide below="md">
+          <Text as="b" marginRight="1em">
+            {formatDate(password.createdAt)}
+          </Text>
+        </Hide>
+      </Flex>
+      <Collapse in={isOpen} animateOpacity>
+        <Divider mt={2} mb={2} />
+        <Box pl={3} pr={3}>
+          <PasswordData password={password} />
+        </Box>
+        <Flex mt={4} justifyContent="space-between" alignItems="center">
+          <Button colorScheme="blue" variant="outline">
+            Edit
+          </Button>
+          <Button colorScheme="red" variant="outline">
+            Delete
+          </Button>
+        </Flex>
+      </Collapse>
+    </Box>
   );
 };
 

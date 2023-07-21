@@ -8,7 +8,7 @@ import {
   useToast,
   MenuGroup,
 } from '@chakra-ui/react';
-import { signOut } from 'firebase/auth';
+import { sendPasswordResetEmail, signOut } from 'firebase/auth';
 import auth from '../lib/auth';
 import { useAuth } from '../hooks';
 
@@ -28,12 +28,30 @@ const UserMenu: FC = () => {
     }
   }, [toast]);
 
+  const passwordReset = useCallback(async () => {
+    if (!user || !user.email) return;
+    try {
+      await sendPasswordResetEmail(auth, user.email);
+      toast({
+        title: 'Password reset sended',
+        status: 'success',
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error sending the password reset',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+  }, [user, toast]);
+
   return (
     <Menu>
       <MenuButton as={Avatar} size="sm" />
       <MenuList>
         <MenuGroup title={user?.email || undefined}>
-          <MenuItem>Manage account</MenuItem>
+          <MenuItem onClick={passwordReset}>Password reset</MenuItem>
           <MenuItem color="red.500" onClick={logout}>
             Logout
           </MenuItem>

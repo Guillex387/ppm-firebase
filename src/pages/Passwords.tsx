@@ -10,33 +10,36 @@ import {
 } from '@chakra-ui/react';
 import { FC, useMemo, useState } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
-import { Password } from '../lib/db';
+import { PasswordWithId } from '../lib/db';
 
 function fetchPasswords() {
-  const example: Password[] = [
+  const example: PasswordWithId[] = [
     {
-      id: 3,
+      id: '3',
       origin: 'google.com',
       email: 'hola@example.com',
       password: 'hola1234',
-      createdAt: new Date(),
+      createdAt: new Date().toDateString(),
       score: 12,
     },
     {
-      id: 2,
+      id: '2',
       origin: 'instagram.com',
       email: 'subnormal@example.com',
       password: 'tres_coyols',
-      createdAt: new Date(),
+      createdAt: new Date().toDateString(),
       score: 58,
     },
     {
-      id: 1,
+      id: '1',
       origin: 'bbva.com',
       email: 'secure@example.com',
       password: '@#7669sadGHT',
-      createdAt: new Date(),
-      score: 98,
+      createdAt: new Date().toDateString(),
+      score: 100,
+      others: {
+        'account number': '2080 5801 10 1234567891',
+      },
     },
   ];
   return example;
@@ -48,7 +51,7 @@ const Passwords: FC = () => {
 
   return (
     <Center>
-      <VStack w="40vw" minW="20rem" marginTop={10}>
+      <VStack w="60vw" minW="20rem" marginTop={10}>
         <Flex w="full" gap={2} alignItems="center">
           <Button
             colorScheme="blue"
@@ -69,13 +72,8 @@ const Passwords: FC = () => {
         </Flex>
         <Divider margin={1} />
         {unLocked ? (
-          passwords.map(({ id, origin, score, createdAt }) => (
-            <PasswordBlock
-              key={id}
-              origin={origin}
-              score={score}
-              createdAt={createdAt}
-            />
+          passwords.map((password) => (
+            <PasswordBlock key={password.id} password={password} />
           ))
         ) : (
           <Text

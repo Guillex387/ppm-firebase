@@ -2,9 +2,12 @@ import { User } from 'firebase/auth';
 import Crypto, { Hash } from './crypto';
 import app from './firebase';
 import {
-  DocumentSnapshot,
+  addDoc,
+  collection,
+  deleteDoc,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
   setDoc,
 } from 'firebase/firestore';
@@ -14,7 +17,7 @@ export interface Password {
   email: string;
   password: string;
   score: number;
-  createdAt: Date;
+  createdAt: string;
   others?: Object;
 }
 
@@ -28,46 +31,72 @@ export interface DocumentData {
 
 class PasswordsDB {
   private static db = getFirestore(app);
+  private static crypto = new Crypto<Password>();
 
-  constructor(
-    private _masterKey: string,
-    private crypto: Crypto<Password>,
-    private user: User
-  ) {}
+  constructor(private masterKey: string, private user: User) {}
 
-  public set masterKey(value: string) {
-    this._masterKey = value;
-  }
-
-  public async getUserDocument(): Promise<DocumentSnapshot> {
-    // TODO
-    // const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
-    // const document = await getDoc(documentRef);
-    // return document;
-  }
-
-  public async createDefaultDocument(): Promise<void> {
-    // TODO
+  public async createDefaultDocument(): Promise<boolean> {
+    const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
+    const document = await getDoc(documentRef);
+    if (document.exists()) return false;
+    await setDoc(documentRef, {
+      masterKeyHash: PasswordsDB.crypto.generateHash(this.masterKey),
+    });
+    return true;
   }
 
   public async verifyMasterKey(): Promise<boolean> {
-    // TODO
-    // const document = await this.getUserDocument();
-    // if (!document.exists()) return false;
-    // const documentData = document.data() as DocumentData;
-    // return this.crypto.verifyHash(this._masterKey, documentData.masterKeyHash);
+    const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
+    const document = await getDoc(documentRef);
+    if (!document.exists()) return false;
+    const { masterKeyHash } = document.data() as DocumentData;
+    return PasswordsDB.crypto.verifyHash(this.masterKey, masterKeyHash);
   }
 
-  public async getPasswords(): Promise<Password[]> {
-    // TODO
+  public async getPasswords(): Promise<PasswordWithId[]> {
+    const passwordsRef = collection(
+      PasswordsDB.db,
+      'user-data',
+      this.user.uid,
+      'passwords'
+    );
+    const passwordsQuery = await getDocs(passwordsRef);
+    if (passwordsQuery.empty) return [];
+    const passwords: PasswordWithId[] = passwordsQuery.docs.map((doc) => {
+      const encryptedPassword = doc.data().data as string;
+      const password = PasswordsDB.crypto.decryptData(
+        encryptedPassword,
+        this.masterKey
+      );
+      return {
+        ...password,
+        id: doc.id,
+      };
+    });
+    return passwords;
   }
 
   public async addPassword(password: Password): Promise<void> {
-    // TODO
+    const passwordsRef = collection(
+      PasswordsDB.db,
+      'user-data',
+      this.user.uid,
+      'passwords'
+    );
+    await addDoc(passwordsRef, {
+      data: PasswordsDB.crypto.encryptData(password, this.masterKey),
+    });
   }
 
-  public async deletePassword(id: number): Promise<void> {
-    // TODO
+  public async deletePassword(id: string): Promise<void> {
+    const documentRef = doc(
+      PasswordsDB.db,
+      'user-data',
+      this.user.uid,
+      'passwords',
+      id
+    );
+    await deleteDoc(documentRef);
   }
 }
 
