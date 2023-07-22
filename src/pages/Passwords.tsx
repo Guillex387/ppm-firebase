@@ -5,12 +5,14 @@ import {
   LightMode,
   Spacer,
   VStack,
-  Text,
+  Spinner,
   Center,
 } from '@chakra-ui/react';
-import { FC, useMemo, useState } from 'react';
+import { FC, useCallback } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
 import { PasswordWithId } from '../lib/db';
+import { usePasswords } from '../hooks';
+import { User } from 'firebase/auth';
 
 function fetchPasswords() {
   const example: PasswordWithId[] = [
@@ -19,7 +21,7 @@ function fetchPasswords() {
       origin: 'google.com',
       email: 'hola@example.com',
       password: 'hola1234',
-      createdAt: new Date().toDateString(),
+      createdAt: Date.now(),
       score: 12,
     },
     {
@@ -27,7 +29,7 @@ function fetchPasswords() {
       origin: 'instagram.com',
       email: 'subnormal@example.com',
       password: 'tres_coyols',
-      createdAt: new Date().toDateString(),
+      createdAt: Date.now(),
       score: 58,
     },
     {
@@ -35,7 +37,7 @@ function fetchPasswords() {
       origin: 'bbva.com',
       email: 'secure@example.com',
       password: '@#7669sadGHT',
-      createdAt: new Date().toDateString(),
+      createdAt: Date.now(),
       score: 100,
       others: {
         'account number': '2080 5801 10 1234567891',
@@ -45,47 +47,71 @@ function fetchPasswords() {
   return example;
 }
 
-const Passwords: FC = () => {
-  const passwords = useMemo(fetchPasswords, []);
-  const [unLocked, setLock] = useState(true);
+export interface PasswordsProps {
+  user: User;
+}
+
+const Passwords: FC<PasswordsProps> = ({ user }) => {
+  const { passwords, locked, loading, reload, unlock, lock } =
+    usePasswords(user);
+
+  const unlockClick = useCallback(async () => {
+    if (locked) {
+      const masterKey = prompt('Master key');
+      if (!masterKey) return;
+      await unlock(masterKey);
+      return;
+    }
+    lock();
+  }, [locked, unlock, lock]);
 
   return (
     <Center>
-      <VStack w="60vw" minW="20rem" marginTop={10}>
+      <VStack w="60vw" minW="20rem" mt={10} pb={10}>
         <Flex w="full" gap={2} alignItems="center">
           <Button
             colorScheme="blue"
             variant="outline"
-            onClick={() => setLock(!unLocked)}
+            isDisabled={loading}
+            onClick={unlockClick}
           >
-            {unLocked ? 'Lock' : 'Unlock'}
+            {locked ? 'Unlock' : 'Lock'}
           </Button>
           <Spacer />
           <LightMode>
-            <Button isDisabled={!unLocked} colorScheme="blue">
+            <Button isDisabled={locked || loading} colorScheme="blue">
               Add
             </Button>
-            <Button isDisabled={!unLocked} colorScheme="green">
+            <Button
+              isDisabled={locked || loading}
+              colorScheme="green"
+              onClick={reload}
+            >
               Reload
             </Button>
           </LightMode>
         </Flex>
         <Divider margin={1} />
-        {unLocked ? (
-          passwords.map((password) => (
-            <PasswordBlock key={password.id} password={password} />
-          ))
-        ) : (
-          <Text
+        {loading || !passwords ? (
+          <Flex
             w="full"
-            textAlign="center"
+            alignItems="center"
+            justifyContent="center"
             p={4}
             bgColor="gray.700"
             borderRadius="md"
             color="gray.400"
           >
-            Unlock the content for view your data
-          </Text>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <p>Unlock the content for view your data</p>
+            )}
+          </Flex>
+        ) : (
+          passwords.map((password) => (
+            <PasswordBlock key={password.id} password={password} />
+          ))
         )}
       </VStack>
     </Center>

@@ -2,9 +2,13 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow only authenticated content owners access
-    match /user-data/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId
+    match /user-data/{userId} {
+      // Only create and read the document (not information updates)
+      allow read, create: if request.auth != null && request.auth.uid == userId;
+      match /passwords/{document} {
+        // In the collection of passwords allow all operations (if is auth)
+      	allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }

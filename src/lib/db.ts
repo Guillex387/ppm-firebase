@@ -17,7 +17,7 @@ export interface Password {
   email: string;
   password: string;
   score: number;
-  createdAt: string;
+  createdAt: number;
   others?: Object;
 }
 
@@ -45,6 +45,13 @@ class PasswordsDB {
     return true;
   }
 
+  public async isNewAccount(): Promise<boolean> {
+    const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
+    const document = await getDoc(documentRef);
+    if (document.exists()) return false;
+    return true;
+  }
+
   public async verifyMasterKey(): Promise<boolean> {
     const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
     const document = await getDoc(documentRef);
@@ -54,6 +61,8 @@ class PasswordsDB {
   }
 
   public async getPasswords(): Promise<PasswordWithId[]> {
+    const correctMasterKey = await this.verifyMasterKey();
+    if (!correctMasterKey) throw new Error();
     const passwordsRef = collection(
       PasswordsDB.db,
       'user-data',
@@ -83,6 +92,8 @@ class PasswordsDB {
       this.user.uid,
       'passwords'
     );
+    const correctMasterKey = await this.verifyMasterKey();
+    if (!correctMasterKey) throw new Error();
     await addDoc(passwordsRef, {
       data: PasswordsDB.crypto.encryptData(password, this.masterKey),
     });
