@@ -73,6 +73,7 @@ export const usePasswords = (user: User) => {
 
   const lock = useCallback(() => {
     setDB(null);
+    setPasswords(null);
   }, []);
 
   const add = useCallback(
@@ -98,6 +99,7 @@ export const usePasswords = (user: User) => {
   const remove = useCallback(
     async (id: string) => {
       if (!db) return;
+      setLoading(true);
       try {
         await db.deletePassword(id);
         const passwords = await db.getPasswords();
@@ -109,6 +111,7 @@ export const usePasswords = (user: User) => {
           isClosable: true,
         });
       }
+      setLoading(false);
     },
     [db]
   );

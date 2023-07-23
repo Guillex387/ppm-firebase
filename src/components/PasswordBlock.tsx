@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import {
   Flex,
   Text,
@@ -18,6 +18,7 @@ import { formatDate } from '../utils';
 
 export interface PasswordBlockProps {
   password: PasswordWithId;
+  remove: (id: string) => any;
 }
 
 function scoreColor(score: number): string {
@@ -25,8 +26,15 @@ function scoreColor(score: number): string {
   return colors[Math.floor(score / 25)];
 }
 
-const PasswordBlock: FC<PasswordBlockProps> = ({ password }) => {
+const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove }) => {
   const { isOpen, onToggle } = useDisclosure();
+
+  const handleRemove = useCallback(() => {
+    const confirmation = confirm('Are you sure?, this data is not retrivable');
+    if (!confirmation) return;
+    remove(password.id);
+  }, []);
+
   return (
     <Box w="full" p={2} bgColor="gray.700" borderRadius="md">
       <Flex alignItems="center" gap={2}>
@@ -60,7 +68,7 @@ const PasswordBlock: FC<PasswordBlockProps> = ({ password }) => {
           <Button colorScheme="blue" variant="outline">
             Edit
           </Button>
-          <Button colorScheme="red" variant="outline">
+          <Button colorScheme="red" variant="outline" onClick={handleRemove}>
             Delete
           </Button>
         </Flex>
