@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import {
   Flex,
   Text,
@@ -29,11 +29,11 @@ function scoreColor(score: number): string {
 const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove }) => {
   const { isOpen, onToggle } = useDisclosure();
 
-  const handleRemove = useCallback(() => {
+  const handleRemove = () => {
     const confirmation = confirm('Are you sure?, this data is not retrivable');
     if (!confirmation) return;
     remove(password.id);
-  }, []);
+  };
 
   return (
     <Box w="full" p={2} bgColor="gray.700" borderRadius="md">

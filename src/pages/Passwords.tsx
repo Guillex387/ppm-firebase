@@ -13,7 +13,7 @@ import { FC, useCallback } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
 import { usePasswords } from '../hooks';
 import { User } from 'firebase/auth';
-import AddPassword from '../components/AddPassword';
+import PasswordDialog from '../components/PasswordDialog';
 
 export interface PasswordsProps {
   user: User;
@@ -93,7 +93,7 @@ const Passwords: FC<PasswordsProps> = ({ user }) => {
           )}
         </VStack>
       </Center>
-      <AddPassword isOpen={isOpen} onClose={onClose} onSubmit={add} />
+      <PasswordDialog isOpen={isOpen} onClose={onClose} onSubmit={add} />
     </>
   );
 };

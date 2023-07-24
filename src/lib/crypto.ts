@@ -1,24 +1,28 @@
-import { AES, SHA512, enc, format, lib } from 'crypto-js';
-
-export interface Hash {
-  hash: string;
-  salt: string;
-}
+import { AES, enc, format, lib } from 'crypto-js';
+import { hash, verify } from 'argon2-browser';
 
 class Crypto<T> {
-  public generateHash(value: string, saltStr?: string): Hash {
-    const salt = saltStr ? enc.Base64.parse(saltStr) : lib.WordArray.random(16);
-    const buffer = enc.Utf8.parse(value);
-    const hash = SHA512(buffer.concat(salt));
-    return {
-      hash: hash.toString(enc.Base64),
-      salt: salt.toString(enc.Base64),
-    };
+  public async generateHash(value: string, salt?: string): Promise<string> {
+    const result = await hash({
+      pass: value,
+      salt: salt ?? lib.WordArray.random(16).toString(enc.Base64),
+      time: 20,
+      mem: 32768,
+      hashLen: 32,
+    });
+    return result.encoded;
   }
 
-  public verifyHash(value: string, hash: Hash): boolean {
-    const generated = this.generateHash(value, hash.salt).hash;
-    return generated === hash.hash;
+  public async verifyHash(value: string, hash: string): Promise<boolean> {
+    try {
+      verify({
+        pass: value,
+        encoded: hash,
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   public encryptData(data: T, masterKey: string): string {

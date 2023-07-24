@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import {
   Avatar,
   Menu,
@@ -16,7 +16,7 @@ const UserMenu: FC = () => {
   const user = useAuth();
   const toast = useToast();
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
     try {
       await signOut(auth);
     } catch (error) {
@@ -26,9 +26,9 @@ const UserMenu: FC = () => {
         isClosable: true,
       });
     }
-  }, [toast]);
+  };
 
-  const passwordReset = useCallback(async () => {
+  const passwordReset = async () => {
     if (!user || !user.email) return;
     try {
       await sendPasswordResetEmail(auth, user.email);
@@ -44,7 +44,7 @@ const UserMenu: FC = () => {
         isClosable: true,
       });
     }
-  }, [user, toast]);
+  };
 
   return (
     <Menu>

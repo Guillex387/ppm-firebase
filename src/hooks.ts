@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import auth from './lib/auth';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import PasswordsDB, { Password, PasswordWithId } from './lib/db';
@@ -19,17 +19,17 @@ export const useAuth = (): User | null => {
 };
 
 export const usePasswords = (user: User) => {
-  const [db, setDB] = useState<PasswordsDB | null>(null);
+  const db = useRef<PasswordsDB | null>(null);
   const [passwords, setPasswords] = useState<PasswordWithId[] | null>(null);
   const [loading, setLoading] = useState(false);
   const locked = useMemo(() => !db, [db]);
   const toast = useToast();
 
-  const reload = useCallback(async () => {
-    if (!db) return;
+  const reload = async () => {
+    if (!db.current) return;
     setLoading(true);
     try {
-      const passwords = await db.getPasswords();
+      const passwords = await db.current.getPasswords();
       setPasswords(passwords);
     } catch (error) {
       toast({
@@ -39,82 +39,73 @@ export const usePasswords = (user: User) => {
       });
     }
     setLoading(false);
-  }, [db]);
+  };
 
-  const unlock = useCallback(
-    async (masterKey: string) => {
-      if (db) return;
-      setLoading(true);
-      try {
-        const db = new PasswordsDB(masterKey, user);
-        const correctMasterKey = await db.verifyMasterKey();
-        if (!correctMasterKey) {
-          toast({
-            title: 'Bad master key',
-            status: 'error',
-            isClosable: true,
-          });
-        } else {
-          setDB(db);
-          const passwords = await db.getPasswords();
-          setPasswords(passwords);
-        }
-      } catch (error) {
+  const unlock = async (masterKey: string) => {
+    if (db.current) return;
+    setLoading(true);
+    try {
+      const newDB = new PasswordsDB(masterKey, user);
+      const correctMasterKey = await newDB.verifyMasterKey();
+      if (!correctMasterKey) {
         toast({
-          title: 'Error verifying master key',
+          title: 'Bad master key',
           status: 'error',
           isClosable: true,
         });
+      } else {
+        db.current = newDB;
+        const passwords = await newDB.getPasswords();
+        setPasswords(passwords);
       }
-      setLoading(false);
-    },
-    [db]
-  );
+    } catch (error) {
+      toast({
+        title: 'Error verifying master key',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
 
-  const lock = useCallback(() => {
-    setDB(null);
+  const lock = () => {
+    db.current = null;
     setPasswords(null);
-  }, []);
+  };
 
-  const add = useCallback(
-    async (password: Password) => {
-      if (!db) return;
-      setLoading(true);
-      try {
-        await db.addPassword(password);
-        const passwords = await db.getPasswords();
-        setPasswords(passwords);
-      } catch (error) {
-        toast({
-          title: 'Error adding the password',
-          status: 'error',
-          isClosable: true,
-        });
-      }
-      setLoading(false);
-    },
-    [db]
-  );
+  const add = async (password: Password) => {
+    if (!db.current) return;
+    setLoading(true);
+    try {
+      await db.current.addPassword(password);
+      const passwords = await db.current.getPasswords();
+      setPasswords(passwords);
+    } catch (error) {
+      toast({
+        title: 'Error adding the password',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
 
-  const remove = useCallback(
-    async (id: string) => {
-      if (!db) return;
-      setLoading(true);
-      try {
-        await db.deletePassword(id);
-        const passwords = await db.getPasswords();
-        setPasswords(passwords);
-      } catch (error) {
-        toast({
-          title: 'Error removing the password',
-          status: 'error',
-          isClosable: true,
-        });
-      }
-      setLoading(false);
-    },
-    [db]
-  );
+  const remove = async (id: string) => {
+    if (!db.current) return;
+    setLoading(true);
+    try {
+      await db.current.deletePassword(id);
+      const passwords = await db.current.getPasswords();
+      setPasswords(passwords);
+    } catch (error) {
+      toast({
+        title: 'Error removing the password',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
 
   return {
     passwords,

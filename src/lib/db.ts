@@ -1,5 +1,5 @@
 import { User } from 'firebase/auth';
-import Crypto, { Hash } from './crypto';
+import Crypto from './crypto';
 import app from './firebase';
 import {
   addDoc,
@@ -26,7 +26,7 @@ export interface PasswordWithId extends Password {
 }
 
 export interface DocumentData {
-  masterKeyHash: Hash;
+  masterKeyHash: string;
 }
 
 class PasswordsDB {
@@ -40,7 +40,7 @@ class PasswordsDB {
     const document = await getDoc(documentRef);
     if (document.exists()) return false;
     await setDoc(documentRef, {
-      masterKeyHash: PasswordsDB.crypto.generateHash(this.masterKey),
+      masterKeyHash: await PasswordsDB.crypto.generateHash(this.masterKey),
     });
     return true;
   }
@@ -57,7 +57,7 @@ class PasswordsDB {
     const document = await getDoc(documentRef);
     if (!document.exists()) return false;
     const { masterKeyHash } = document.data() as DocumentData;
-    return PasswordsDB.crypto.verifyHash(this.masterKey, masterKeyHash);
+    return await PasswordsDB.crypto.verifyHash(this.masterKey, masterKeyHash);
   }
 
   public async getPasswords(): Promise<PasswordWithId[]> {
