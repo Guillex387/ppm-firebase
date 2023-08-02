@@ -1,28 +1,45 @@
-import { AES, enc, format, lib } from 'crypto-js';
-import { hash, verify } from 'argon2-browser';
+import { AES, enc, format } from 'crypto-js';
+import * as scrypt from 'scrypt-pbkdf';
+
+export interface Hash {
+  hash: string;
+  salt: string;
+}
 
 class Crypto<T> {
-  public async generateHash(value: string, salt?: string): Promise<string> {
-    const result = await hash({
-      pass: value,
-      salt: salt ?? lib.WordArray.random(16).toString(enc.Base64),
-      time: 20,
-      mem: 32768,
-      hashLen: 32,
-    });
-    return result.encoded;
+  private stringToBuffer(base64: string): ArrayBuffer {
+    const raw = atob(base64);
+    let array: number[] = [];
+    for (let i = 0; i < raw.length; ++i) {
+      const code = raw.charCodeAt(i);
+      array.push(code);
+    }
+    return new Uint8Array(array).buffer;
   }
 
-  public async verifyHash(value: string, hash: string): Promise<boolean> {
-    try {
-      verify({
-        pass: value,
-        encoded: hash,
-      });
-      return true;
-    } catch (error) {
-      return false;
-    }
+  private bufferToString(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    const raw = String.fromCharCode(...bytes);
+    return btoa(raw);
+  }
+
+  public async generateHash(value: string, saltStr?: string): Promise<Hash> {
+    const salt = saltStr ? this.stringToBuffer(saltStr) : scrypt.salt(16);
+    const derivedKeyLength = 32;
+    const result = await scrypt.scrypt(value, salt, derivedKeyLength, {
+      r: 8,
+      p: 1,
+      N: 32768,
+    });
+    return {
+      salt: this.bufferToString(salt),
+      hash: this.bufferToString(result),
+    };
+  }
+
+  public async verifyHash(value: string, hash: Hash): Promise<boolean> {
+    const generated = await this.generateHash(value, hash.salt);
+    return generated.hash === hash.hash;
   }
 
   public encryptData(data: T, masterKey: string): string {
