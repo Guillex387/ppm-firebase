@@ -9,4 +9,12 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      format: {
+        comments: false,
+      },
+    },
+  },
 });
