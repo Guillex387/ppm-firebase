@@ -9,22 +9,32 @@ import {
   Center,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
 import { usePasswords } from '../hooks';
 import { User } from 'firebase/auth';
 import PasswordDialog from '../components/PasswordDialog';
+import Container from '../components/Container';
 
 export interface PasswordsProps {
   user: User;
 }
 
 const Passwords: FC<PasswordsProps> = ({ user }) => {
-  const { passwords, locked, loading, reload, unlock, lock, add, remove } =
-    usePasswords(user);
+  const {
+    passwords,
+    locked,
+    loading,
+    reload,
+    unlock,
+    lock,
+    add,
+    remove,
+    edit,
+  } = usePasswords(user);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleUnlock = useCallback(async () => {
+  const handleUnlock = async () => {
     if (locked) {
       const masterKey = prompt('Master key');
       if (!masterKey) return;
@@ -32,7 +42,7 @@ const Passwords: FC<PasswordsProps> = ({ user }) => {
       return;
     }
     lock();
-  }, [locked, unlock, lock]);
+  };
 
   return (
     <>
@@ -66,30 +76,24 @@ const Passwords: FC<PasswordsProps> = ({ user }) => {
             </LightMode>
           </Flex>
           <Divider margin={1} />
-          {loading || locked || !passwords ? (
-            <Flex
-              w="full"
-              alignItems="center"
-              justifyContent="center"
-              p={4}
-              bgColor="gray.700"
-              borderRadius="md"
-              color="gray.400"
-            >
-              {loading ? (
-                <Spinner />
-              ) : (
-                <p>Unlock the content for view your data</p>
-              )}
-            </Flex>
+          {locked || !passwords ? (
+            <Container>
+              <p>Unlock the content for view your data</p>
+            </Container>
           ) : (
             passwords.map((password) => (
               <PasswordBlock
                 key={password.id}
                 password={password}
                 remove={remove}
+                edit={edit}
               />
             ))
+          )}
+          {loading && (
+            <Container>
+              <Spinner />
+            </Container>
           )}
         </VStack>
       </Center>

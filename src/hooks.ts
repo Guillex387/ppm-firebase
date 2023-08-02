@@ -22,7 +22,7 @@ export const usePasswords = (user: User) => {
   const db = useRef<PasswordsDB | null>(null);
   const [passwords, setPasswords] = useState<PasswordWithId[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const locked = useMemo(() => !db, [db]);
+  const locked = useMemo(() => !passwords, [passwords]);
   const toast = useToast();
 
   const reload = async () => {
@@ -44,19 +44,26 @@ export const usePasswords = (user: User) => {
   const unlock = async (masterKey: string) => {
     if (db.current) return;
     setLoading(true);
+    const newDB = new PasswordsDB(masterKey, user);
     try {
-      const newDB = new PasswordsDB(masterKey, user);
       const correctMasterKey = await newDB.verifyMasterKey();
       if (!correctMasterKey) {
-        toast({
-          title: 'Bad master key',
-          status: 'error',
-          isClosable: true,
-        });
-      } else {
-        db.current = newDB;
-        const passwords = await newDB.getPasswords();
-        setPasswords(passwords);
+        if (await newDB.isNewAccount()) {
+          toast({
+            title: 'Create a masterKey',
+            description: 'Note: is in the user icon',
+            status: 'warning',
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: 'Bad master key',
+            status: 'error',
+            isClosable: true,
+          });
+        }
+        setLoading(false);
+        return;
       }
     } catch (error) {
       toast({
@@ -64,7 +71,12 @@ export const usePasswords = (user: User) => {
         status: 'error',
         isClosable: true,
       });
+      setLoading(false);
+      return;
     }
+    db.current = newDB;
+    const passwords = await newDB.getPasswords();
+    setPasswords(passwords);
     setLoading(false);
   };
 
@@ -83,6 +95,23 @@ export const usePasswords = (user: User) => {
     } catch (error) {
       toast({
         title: 'Error adding the password',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
+
+  const edit = async (id: string, password: Password) => {
+    if (!db.current) return;
+    setLoading(true);
+    try {
+      await db.current.updatePassword(id, password);
+      const passwords = await db.current.getPasswords();
+      setPasswords(passwords);
+    } catch (error) {
+      toast({
+        title: 'Error updating the password',
         status: 'error',
         isClosable: true,
       });
@@ -115,6 +144,7 @@ export const usePasswords = (user: User) => {
     lock,
     unlock,
     add,
+    edit,
     remove,
   };
 };

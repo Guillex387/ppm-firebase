@@ -16,7 +16,7 @@ const PasswordData: FC<PasswordDataProps> = ({ password }) => {
     };
     if (password.others) obj = { ...password.others, ...obj };
     return obj;
-  }, []);
+  }, [password]);
 
   return (
     <>
@@ -29,6 +29,10 @@ const PasswordData: FC<PasswordDataProps> = ({ password }) => {
           {show ? 'Hide' : 'Show'}
         </Button>
       </Flex>
+      <Text color="blue.300" fontSize="sm" fontWeight="bold">
+        password security
+      </Text>
+      <Text>{password.score}/100</Text>
       {Object.entries(parsed).map(([attribute, value]) => (
         <div key={attribute}>
           <Text color="blue.300" fontSize="sm" fontWeight="bold">
