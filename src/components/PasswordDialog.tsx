@@ -24,7 +24,14 @@ interface AddPasswordProps {
   title?: string;
 }
 
-const illegalFields = ['origin', 'password', 'email', 'score', 'createdAt'];
+const illegalFields = [
+  'origin',
+  'password',
+  'email',
+  'createdAt',
+  'password security',
+];
+const mainKeys = ['origin', 'password', 'email'];
 
 const PasswordDialog: FC<AddPasswordProps> = ({
   isOpen,
@@ -45,7 +52,6 @@ const PasswordDialog: FC<AddPasswordProps> = ({
       ev.target as HTMLFormElement
     ) as PasswordFormData;
     const formDataArray = [...formData];
-    const mainKeys = ['origin', 'password', 'email'];
     const { origin, password, email } = Object.fromEntries(
       formDataArray.filter(([key]) => {
         return mainKeys.includes(key);
@@ -53,7 +59,6 @@ const PasswordDialog: FC<AddPasswordProps> = ({
     );
     const others = Object.fromEntries(
       formDataArray.filter(([key]) => {
-        const mainKeys = ['origin', 'password', 'email'];
         return !mainKeys.includes(key);
       })
     );
@@ -61,7 +66,6 @@ const PasswordDialog: FC<AddPasswordProps> = ({
       origin,
       password,
       email,
-      score: defaultValue?.score || 50, // TODO: make the lib for evaluates the passwords
       createdAt: defaultValue?.createdAt || Date.now(),
       others,
     });

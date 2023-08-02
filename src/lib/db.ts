@@ -16,7 +16,6 @@ export interface Password {
   origin: string;
   email: string;
   password: string;
-  score: number;
   createdAt: number;
   others?: {
     [key: string]: string;

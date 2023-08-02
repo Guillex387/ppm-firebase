@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import {
   Flex,
   Text,
@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { Password, PasswordWithId } from '../lib/db';
 import PasswordData from './PasswordData';
-import { formatDate } from '../utils';
+import { formatDate, passwordScore } from '../utils';
 import PasswordDialog from './PasswordDialog';
 
 export interface PasswordBlockProps {
@@ -31,6 +31,9 @@ function scoreColor(score: number): string {
 const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove, edit }) => {
   const { isOpen, onToggle } = useDisclosure();
   const dialog = useDisclosure();
+  const score = useMemo(() => {
+    return passwordScore(password.password);
+  }, [password.password]);
 
   const handleRemove = () => {
     const confirmation = confirm('Are you sure?, this data is not retrivable');
@@ -54,8 +57,8 @@ const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove, edit }) => {
             <LightMode>
               <Progress
                 size="xs"
-                value={password.score}
-                colorScheme={scoreColor(password.score)}
+                value={score}
+                colorScheme={scoreColor(score)}
                 borderRadius="md"
                 bgColor="gray.800"
               />

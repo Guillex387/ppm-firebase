@@ -16,7 +16,8 @@ or others security risks.
 - The host only save an encrypted token which contain your data.
 - The master key for decrypt your data, is managed for you
   and if you lost it, you lost your data.
-- The algorithm for encrypt and decrypt de information is [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard).
+- The algorithm for encrypt and decrypt the information is [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard).
+- The algorithm for verify the master key is [scrypt](https://en.wikipedia.org/wiki/Scrypt).
 
 But because of the way it's designed, this one is vulnerable to any insecure browser
 or in rare cases a computer infected with malware. My recomendation is search possible malware on your computer,

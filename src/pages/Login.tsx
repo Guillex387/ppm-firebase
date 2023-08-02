@@ -1,4 +1,4 @@
-import { FC, FormEvent, useCallback, useContext, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import {
   Input,
   Button,
@@ -18,28 +18,25 @@ const Login: FC = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
 
-  const submit = useCallback(
-    async (ev: FormEvent) => {
-      ev.preventDefault();
-      setLoading(true);
-      const formData = new FormData(ev.target as HTMLFormElement);
-      const { email, password } = Object.fromEntries(formData);
-      if (email instanceof File || password instanceof File) return;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        toast({
-          title: 'Incorrect email or password',
-          status: 'error',
-          isClosable: true,
-        });
-      }
-      setLoading(false);
-    },
-    [toast]
-  );
+  const submit = async (ev: FormEvent) => {
+    ev.preventDefault();
+    setLoading(true);
+    const formData = new FormData(ev.target as HTMLFormElement);
+    const { email, password } = Object.fromEntries(formData);
+    if (email instanceof File || password instanceof File) return;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      toast({
+        title: 'Incorrect email or password',
+        status: 'error',
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
 
-  const forgotPassword = useCallback(async () => {
+  const forgotPassword = async () => {
     setLoading(true);
     const email = prompt('Put the email for reset your password');
     if (!email) {
@@ -61,7 +58,7 @@ const Login: FC = () => {
       });
     }
     setLoading(false);
-  }, [toast]);
+  };
 
   return (
     <Center marginTop={20}>

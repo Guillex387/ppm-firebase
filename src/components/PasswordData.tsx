@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { PasswordWithId } from '../lib/db';
 import { Button, Flex, Text, useBoolean } from '@chakra-ui/react';
-import { formatDate } from '../utils';
+import { formatDate, passwordScore } from '../utils';
 
 export interface PasswordDataProps {
   password: PasswordWithId;
@@ -17,6 +17,9 @@ const PasswordData: FC<PasswordDataProps> = ({ password }) => {
     if (password.others) obj = { ...password.others, ...obj };
     return obj;
   }, [password]);
+  const score = useMemo(() => {
+    return passwordScore(password.password);
+  }, [password.password]);
 
   return (
     <>
@@ -32,7 +35,7 @@ const PasswordData: FC<PasswordDataProps> = ({ password }) => {
       <Text color="blue.300" fontSize="sm" fontWeight="bold">
         password security
       </Text>
-      <Text>{password.score}/100</Text>
+      <Text>{score}/100</Text>
       {Object.entries(parsed).map(([attribute, value]) => (
         <div key={attribute}>
           <Text color="blue.300" fontSize="sm" fontWeight="bold">
