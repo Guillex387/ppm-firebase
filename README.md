@@ -8,7 +8,7 @@ create an account for his friends, coworkers, etc.
 
 ## Security
 
-The app have diferent security features to prevent data filtering
+The app have different security features to prevent data filtering
 or others security risks.
 
 - Your data is encrypted and decrypted only in the client side,
@@ -20,9 +20,9 @@ or others security risks.
 - The algorithm for verify the master key is [scrypt](https://en.wikipedia.org/wiki/Scrypt).
 
 But because of the way it's designed, this one is vulnerable to any insecure browser
-or in rare cases a computer infected with malware. My recomendation is search possible malware on your computer,
+or in rare cases a computer infected with malware. My recommendation is search possible malware on your computer,
 and use a good browser like Chrome, Edge, Safari, Brave and Firefox,
-I recomend the last one because the app is developed with it.
+I recommend the last one because the app is developed with it.
 
 ## Development
 
@@ -33,7 +33,7 @@ The application was developed using [typescript](https://www.typescriptlang.org/
 ## Deploy in your firebase console
 
 The first step is create a project in firebase console, and then enable Firebase Auth,
-Firestore and Hosting. Register a web app and put the crendetials in the `.env` file in the root
+Firestore and Hosting. Register a web app and put the credentials in the `.env` file in the root
 of the project with this format:
 
 ```env
@@ -56,7 +56,7 @@ Create the `.firebaserc`:
 }
 ```
 
-Follow the steps in firebase for set up [firebase CLI](https://firebase.google.com/docs/cli) and run `npm i` for install the depencencies.
+Follow the steps in firebase for set up [firebase CLI](https://firebase.google.com/docs/cli) and run `npm i` for install the dependencies.
 
 ## License
 
