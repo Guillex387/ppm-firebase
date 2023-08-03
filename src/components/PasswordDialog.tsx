@@ -1,4 +1,4 @@
-import { FC, FormEvent, useRef, useState } from 'react';
+import { type FC, type FormEvent, useRef, useState } from 'react';
 import {
   Button,
   Input,
@@ -11,12 +11,12 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react';
-import { Password } from '../lib/db';
+import type { Password } from '../lib/db';
 import PasswordInput from './PasswordInput';
 
 type PasswordFormData = Iterable<[string, string]>;
 
-interface AddPasswordProps {
+export interface AddPasswordProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (value: Password) => void;
@@ -31,6 +31,7 @@ const illegalFields = [
   'createdAt',
   'password security',
 ];
+
 const mainKeys = ['origin', 'password', 'email'];
 
 const PasswordDialog: FC<AddPasswordProps> = ({

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { ChakraBaseProvider, Flex, Box } from '@chakra-ui/react';
 import theme from './theme';
 import NavBar from './components/NavBar';

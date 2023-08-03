@@ -1,5 +1,5 @@
-import { User } from 'firebase/auth';
-import Crypto, { Hash } from './crypto';
+import type { User } from 'firebase/auth';
+import Crypto, { type Hash } from './crypto';
 import app from './firebase';
 import {
   addDoc,

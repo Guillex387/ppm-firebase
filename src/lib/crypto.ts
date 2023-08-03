@@ -1,5 +1,6 @@
 import { AES, enc, format } from 'crypto-js';
 import * as scrypt from 'scrypt-pbkdf';
+import { bufferToString, stringToBuffer } from '../utils';
 
 export interface Hash {
   hash: string;
@@ -7,24 +8,8 @@ export interface Hash {
 }
 
 class Crypto<T> {
-  private stringToBuffer(base64: string): ArrayBuffer {
-    const raw = atob(base64);
-    let array: number[] = [];
-    for (let i = 0; i < raw.length; ++i) {
-      const code = raw.charCodeAt(i);
-      array.push(code);
-    }
-    return new Uint8Array(array).buffer;
-  }
-
-  private bufferToString(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    const raw = String.fromCharCode(...bytes);
-    return btoa(raw);
-  }
-
   public async generateHash(value: string, saltStr?: string): Promise<Hash> {
-    const salt = saltStr ? this.stringToBuffer(saltStr) : scrypt.salt(16);
+    const salt = saltStr ? stringToBuffer(saltStr) : scrypt.salt(16);
     const derivedKeyLength = 32;
     const result = await scrypt.scrypt(value, salt, derivedKeyLength, {
       r: 8,
@@ -32,8 +17,8 @@ class Crypto<T> {
       N: 32768,
     });
     return {
-      salt: this.bufferToString(salt),
-      hash: this.bufferToString(result),
+      salt: bufferToString(salt),
+      hash: bufferToString(result),
     };
   }
 

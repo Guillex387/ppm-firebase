@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { type FC, useMemo } from 'react';
 import {
   Flex,
   Text,
@@ -12,7 +12,7 @@ import {
   useDisclosure,
   Divider,
 } from '@chakra-ui/react';
-import { Password, PasswordWithId } from '../lib/db';
+import type { Password, PasswordWithId } from '../lib/db';
 import PasswordData from './PasswordData';
 import { formatDate, passwordScore } from '../utils';
 import PasswordDialog from './PasswordDialog';

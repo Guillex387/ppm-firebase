@@ -9,10 +9,10 @@ import {
   Center,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FC } from 'react';
+import type { FC } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
 import { usePasswords } from '../hooks';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import PasswordDialog from '../components/PasswordDialog';
 import Container from '../components/Container';
 

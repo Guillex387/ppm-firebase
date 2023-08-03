@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react';
+import { type FC, useContext } from 'react';
 import UserMenu from './UserMenu';
 import { Heading, Box, Flex, Spacer, Center } from '@chakra-ui/react';
 import { AuthContext } from '../lib/auth';

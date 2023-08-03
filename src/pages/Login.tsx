@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from 'react';
+import { type FC, type FormEvent, useState } from 'react';
 import {
   Input,
   Button,

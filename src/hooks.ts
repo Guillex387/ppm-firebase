@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import auth from './lib/auth';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import PasswordsDB, { Password, PasswordWithId } from './lib/db';
+import PasswordsDB, { type Password, type PasswordWithId } from './lib/db';
 import { useToast } from '@chakra-ui/react';
 
 export const useAuth = (): User | null => {

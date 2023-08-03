@@ -1,5 +1,5 @@
-import { FC, useMemo } from 'react';
-import { PasswordWithId } from '../lib/db';
+import { type FC, useMemo } from 'react';
+import type { PasswordWithId } from '../lib/db';
 import { Button, Flex, Text, useBoolean } from '@chakra-ui/react';
 import { formatDate, passwordScore } from '../utils';
 
