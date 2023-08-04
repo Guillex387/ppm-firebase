@@ -1,4 +1,11 @@
-import { type FC, type FormEvent, useRef, useState } from 'react';
+import {
+  type FC,
+  type FormEvent,
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+} from 'react';
 import {
   Button,
   Input,
@@ -41,11 +48,20 @@ const PasswordDialog: FC<AddPasswordProps> = ({
   title,
   defaultValue,
 }) => {
-  const [extraFields, setExtraFields] = useState<string[]>(
-    defaultValue ? Object.keys(defaultValue.others || {}) : []
-  );
+  const initialFields = useMemo(() => {
+    return defaultValue ? Object.keys(defaultValue.others || {}) : [];
+  }, [defaultValue]);
+  const [extraFields, setExtraFields] = useState<string[]>(initialFields);
   const extraFieldInput = useRef<HTMLInputElement | null>(null);
-  const toast = useToast();
+  const toast = useToast({
+    status: 'error',
+    isClosable: true,
+  });
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setExtraFields(initialFields);
+  }, [isOpen]);
 
   const handleSubmit = (ev: FormEvent) => {
     ev.preventDefault();
@@ -80,16 +96,12 @@ const PasswordDialog: FC<AddPasswordProps> = ({
     if (!newField) {
       toast({
         title: 'New field is empty',
-        status: 'error',
-        isClosable: true,
       });
       return;
     }
     if (extraFields.includes(newField) || illegalFields.includes(newField)) {
       toast({
         title: 'This field already exists',
-        status: 'error',
-        isClosable: true,
       });
       return;
     }
@@ -103,7 +115,12 @@ const PasswordDialog: FC<AddPasswordProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      scrollBehavior="inside"
+      size={['full', 'full', 'md']}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{title || 'Add password'}</ModalHeader>
