@@ -1,24 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import auth from './lib/auth';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import PasswordsDB, { type Password, type PasswordWithId } from './lib/db';
+import type { User } from 'firebase/auth';
+import PasswordsDB from '../lib/db';
+import { useRef, useState, useMemo } from 'react';
 import { useToast } from '@chakra-ui/react';
+import type { Password, PasswordWithId } from '../lib/db';
 
-export const useAuth = (): User | null => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-
-    return unSubscribe;
-  }, []);
-
-  return user;
-};
-
-export const usePasswords = (user: User) => {
+const usePasswords = (user: User) => {
   const db = useRef<PasswordsDB | null>(null);
   const [passwords, setPasswords] = useState<PasswordWithId[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -148,3 +134,5 @@ export const usePasswords = (user: User) => {
     remove,
   };
 };
+
+export default usePasswords;

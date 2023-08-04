@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import type { FC } from 'react';
 import PasswordBlock from '../components/PasswordBlock';
-import { usePasswords } from '../hooks';
+import usePasswords from '../hooks/usePasswords';
 import type { User } from 'firebase/auth';
 import PasswordDialog from '../components/PasswordDialog';
 import Container from '../components/Container';
