@@ -1,4 +1,4 @@
-import { type FC, type FormEvent, useState } from 'react';
+import { type FC, type FormEvent, useState, useLayoutEffect } from 'react';
 import {
   Input,
   Button,
@@ -14,9 +14,20 @@ import {
 } from 'firebase/auth';
 import auth from '../lib/auth';
 
-const Login: FC = () => {
-  const toast = useToast();
+interface LoginProps {
+  initialLoading: boolean;
+}
+
+const Login: FC<LoginProps> = ({ initialLoading }) => {
+  const toast = useToast({
+    status: 'error',
+    isClosable: true,
+  });
   const [loading, setLoading] = useState(false);
+
+  useLayoutEffect(() => {
+    setLoading(initialLoading);
+  }, [initialLoading]);
 
   const submit = async (ev: FormEvent) => {
     ev.preventDefault();
@@ -29,8 +40,6 @@ const Login: FC = () => {
     } catch (error) {
       toast({
         title: 'Incorrect email or password',
-        status: 'error',
-        isClosable: true,
       });
     }
     setLoading(false);
@@ -48,13 +57,10 @@ const Login: FC = () => {
       toast({
         title: 'Password reset sended',
         status: 'success',
-        isClosable: true,
       });
     } catch (error) {
       toast({
         title: 'Error sending the password reset',
-        status: 'error',
-        isClosable: true,
       });
     }
     setLoading(false);
@@ -72,8 +78,13 @@ const Login: FC = () => {
         onSubmit={submit}
       >
         <Heading textAlign="center">Login</Heading>
-        <Input name="email" variant="outline" placeholder="Enter email" />
-        <PasswordInput name="password" />
+        <Input
+          isDisabled={loading}
+          name="email"
+          variant="outline"
+          placeholder="email"
+        />
+        <PasswordInput isDisabled={loading} name="password" />
         <Button
           variant="link"
           alignSelf="start"

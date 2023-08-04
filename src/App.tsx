@@ -5,10 +5,10 @@ import NavBar from './components/NavBar';
 import Login from './pages/Login';
 import Passwords from './pages/Passwords';
 import { AuthContext } from './lib/auth';
-import { useAuth } from './hooks';
+import useAuth from './hooks/useAuth';
 
 const App: FC = () => {
-  const user = useAuth();
+  const { user, loading } = useAuth();
 
   return (
     <AuthContext.Provider value={user}>
@@ -16,7 +16,11 @@ const App: FC = () => {
         <Flex direction="column" w="full" h="full">
           <NavBar />
           <Box position="relative" w="full" h="full">
-            {user ? <Passwords user={user} /> : <Login />}
+            {user ? (
+              <Passwords user={user} />
+            ) : (
+              <Login initialLoading={loading} />
+            )}
           </Box>
         </Flex>
       </ChakraBaseProvider>
