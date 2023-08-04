@@ -15,7 +15,7 @@ const NavBar: FC = () => {
           </Heading>
         </Center>
         <Spacer />
-        {user && <UserMenu />}
+        {user && <UserMenu user={user} />}
       </Flex>
     </Box>
   );

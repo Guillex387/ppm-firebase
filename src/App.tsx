@@ -16,7 +16,7 @@ const App: FC = () => {
         <Flex direction="column" w="full" h="full">
           <NavBar />
           <Box position="relative" w="full" h="full">
-            {user === null ? <Login /> : <Passwords user={user} />}
+            {user ? <Passwords user={user} /> : <Login />}
           </Box>
         </Flex>
       </ChakraBaseProvider>
