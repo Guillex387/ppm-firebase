@@ -1,6 +1,13 @@
 import { type FC, useMemo } from 'react';
 import type { PasswordWithId } from '../lib/db';
-import { Button, Flex, Text, useBoolean } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Input,
+  Text,
+  useBoolean,
+  useClipboard,
+} from '@chakra-ui/react';
 import { formatDate, passwordScore } from '../utils';
 
 export interface PasswordDataProps {
@@ -24,6 +31,7 @@ const PasswordData: FC<PasswordDataProps> = ({ password }) => {
   const score = useMemo(() => {
     return passwordScore(password.password);
   }, [password.password]);
+  const { onCopy, hasCopied } = useClipboard(password.password);
 
   return (
     <>
@@ -31,9 +39,18 @@ const PasswordData: FC<PasswordDataProps> = ({ password }) => {
         password
       </Text>
       <Flex alignItems="center">
-        <Text mr="4">{show ? password.password : '•••••••••••••••••'}</Text>
-        <Button size="xs" onClick={toggle}>
+        <Input
+          mr="4"
+          type={show ? 'text' : 'password'}
+          variant="unstyled"
+          maxW={60}
+          value={password.password}
+        />
+        <Button size="xs" onClick={toggle} mr="4">
           {show ? 'Hide' : 'Show'}
+        </Button>
+        <Button size="xs" onClick={onCopy}>
+          {hasCopied ? 'Copied!' : 'Copy'}
         </Button>
       </Flex>
       <Text color="blue.300" fontSize="sm" fontWeight="bold">

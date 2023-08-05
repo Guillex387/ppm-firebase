@@ -32,7 +32,7 @@ export interface PasswordBlockProps {
  * @returns
  */
 function scoreColor(score: number): string {
-  const colors = ['red', 'red', 'orange', 'green', 'green'];
+  const colors = ['red', 'red', 'orange', 'green', 'teal'];
   return colors[Math.floor(score / 25)];
 }
 
