@@ -36,7 +36,7 @@ The application was developed using [typescript](https://www.typescriptlang.org/
 
 ## Deploy in your firebase console
 
-> **Note**: you need some firebase and programming experience to configure.
+> **Note**: you need some firebase and programming experience to configure it.
 
 - The first step is create a project in firebase console, and then enable Firebase Auth,
   Firestore and Hosting. Register a web app and put the credentials in the `.env` file in the root
