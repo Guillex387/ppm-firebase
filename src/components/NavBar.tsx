@@ -1,6 +1,6 @@
 import { type FC, useContext, lazy, Suspense } from 'react';
 import { Heading, Box, Flex, Spacer, Center } from '@chakra-ui/react';
-import { AuthContext } from '../contexts';
+import AuthContext from '../contexts/authCtx';
 
 const UserMenu = lazy(() => import('./UserMenu'));
 

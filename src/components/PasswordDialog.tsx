@@ -59,6 +59,7 @@ const PasswordDialog: FC<AddPasswordProps> = ({
   const initialFields = useMemo(() => {
     return defaultValue ? Object.keys(defaultValue.others || {}) : [];
   }, [defaultValue]);
+  const [defaultValueRender, setDefaultValueRender] = useState(defaultValue);
   const [extraFields, setExtraFields] = useState<string[]>(initialFields);
   const extraFieldInput = useRef<HTMLInputElement | null>(null);
   const toast = useToast({
@@ -67,8 +68,12 @@ const PasswordDialog: FC<AddPasswordProps> = ({
   });
 
   useEffect(() => {
-    if (!isOpen) return;
-    setExtraFields(initialFields);
+    if (!isOpen) {
+      setDefaultValueRender(undefined);
+    } else {
+      setExtraFields(initialFields);
+      setDefaultValueRender(defaultValue);
+    }
   }, [isOpen]);
 
   const handleSubmit = (ev: FormEvent) => {
@@ -144,17 +149,17 @@ const PasswordDialog: FC<AddPasswordProps> = ({
             <Input
               name="origin"
               placeholder="origin"
-              defaultValue={defaultValue?.origin}
+              defaultValue={defaultValueRender?.origin}
             />
             <PasswordInput
               name="password"
               placeholder="password"
-              defaultValue={defaultValue?.password}
+              defaultValue={defaultValueRender?.password}
             />
             <Input
               name="email"
               placeholder="email"
-              defaultValue={defaultValue?.email}
+              defaultValue={defaultValueRender?.email}
             />
             {extraFields.map((field) => (
               <Stack key={field} direction="row" spacing={4}>
@@ -162,7 +167,8 @@ const PasswordDialog: FC<AddPasswordProps> = ({
                   name={field}
                   placeholder={field}
                   defaultValue={
-                    defaultValue?.others && defaultValue.others[field]
+                    defaultValueRender?.others &&
+                    defaultValueRender.others[field]
                   }
                 />
                 <Button onClick={() => handleRemoveField(field)}>Remove</Button>
