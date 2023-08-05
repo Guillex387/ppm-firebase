@@ -1,5 +1,11 @@
-import { lazy, type FC, Suspense } from 'react';
-import { ChakraBaseProvider, Flex, Box } from '@chakra-ui/react';
+import { type FC, lazy, Suspense } from 'react';
+import {
+  ChakraBaseProvider,
+  Flex,
+  Box,
+  Center,
+  Spinner,
+} from '@chakra-ui/react';
 import Login from './pages/Login';
 import theme from './theme';
 import NavBar from './components/NavBar';
@@ -18,7 +24,13 @@ const App: FC = () => {
           <NavBar />
           <Box position="relative" w="full" h="full">
             {user ? (
-              <Suspense>
+              <Suspense
+                fallback={
+                  <Center h="full">
+                    <Spinner size="xl" />
+                  </Center>
+                }
+              >
                 <Passwords user={user} />
               </Suspense>
             ) : (
