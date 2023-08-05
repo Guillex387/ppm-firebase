@@ -41,6 +41,14 @@ const illegalFields = [
 
 const mainKeys = ['origin', 'password', 'email'];
 
+/**
+ * A modal form to create and edit a password
+ * @param isOpen boolean state that shows or not the modal
+ * @param onClose function to close the modal
+ * @param onSubmit function to capture the data of the form submit
+ * @param title the title of the modal
+ * @param defaultValue the default values of the form when open the modal
+ */
 const PasswordDialog: FC<AddPasswordProps> = ({
   isOpen,
   onClose,

@@ -1,6 +1,9 @@
 import type { PropsWithChildren } from 'react';
 import { Flex } from '@chakra-ui/react';
 
+/**
+ * Visual block component, to wrap text or other component
+ */
 const Container = ({ children }: PropsWithChildren) => {
   return (
     <Flex

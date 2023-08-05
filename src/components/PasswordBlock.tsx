@@ -23,11 +23,26 @@ export interface PasswordBlockProps {
   edit: (id: string, password: Password) => any;
 }
 
+/**
+ * A function that returns the color of the security bar
+ * - `red` for scores between 0 and 49
+ * - `orange` for scores between 50 and 74
+ * - `green` for scores between 75 and 100
+ * @param {number} score The security level of the password
+ * @returns
+ */
 function scoreColor(score: number): string {
   const colors = ['red', 'red', 'orange', 'green', 'green'];
   return colors[Math.floor(score / 25)];
 }
 
+/**
+ * A visual block component to show the password information
+ * @param password The object that contains the password info
+ * @param remove The method to delete the password
+ * @param edit The method to edit the password
+ * @returns
+ */
 const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove, edit }) => {
   const { isOpen, onToggle } = useDisclosure();
   const dialog = useDisclosure();

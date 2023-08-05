@@ -15,6 +15,10 @@ export interface UserMenuProps {
   user: User;
 }
 
+/**
+ * A component for manage your app account
+ * @param user The object that represent the login user
+ */
 const UserMenu: FC<UserMenuProps> = ({ user }) => {
   const toast = useToast({
     status: 'error',

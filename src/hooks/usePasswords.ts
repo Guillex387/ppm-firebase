@@ -4,6 +4,10 @@ import { useRef, useState, useMemo } from 'react';
 import { useToast } from '@chakra-ui/react';
 import type { Password, PasswordWithId } from '../lib/db';
 
+/**
+ * A hook for get, edit, update and delete the stored passwords
+ * @param user The object that represent the login user
+ */
 const usePasswords = (user: User) => {
   const db = useRef<PasswordsDB | null>(null);
   const [passwords, setPasswords] = useState<PasswordWithId[] | null>(null);

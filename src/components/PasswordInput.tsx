@@ -8,6 +8,9 @@ import {
   InputProps,
 } from '@chakra-ui/react';
 
+/**
+ * A classic password text input
+ */
 const PasswordInput: FC<InputProps> = (props) => {
   const [show, { toggle }] = useBoolean(false);
 

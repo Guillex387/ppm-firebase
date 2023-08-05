@@ -14,6 +14,10 @@ interface LoginProps {
   initialLoading: boolean;
 }
 
+/**
+ * The login page for access to the app
+ * @param initialLoading boolean state to indicate the loading when is checking the account
+ */
 const Login: FC<LoginProps> = ({ initialLoading }) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast({

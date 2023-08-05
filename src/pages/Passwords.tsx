@@ -20,6 +20,10 @@ export interface PasswordsProps {
   user: User;
 }
 
+/**
+ * The main page to show and operate with your passwords
+ * @param user The object that represent the login user
+ */
 const Passwords: FC<PasswordsProps> = ({ user }) => {
   const {
     passwords,

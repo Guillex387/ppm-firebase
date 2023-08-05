@@ -4,6 +4,10 @@ import { AuthContext } from '../contexts';
 
 const UserMenu = lazy(() => import('./UserMenu'));
 
+/**
+ * Navigation bar component, for show the app title
+ * and some stuff
+ */
 const NavBar: FC = () => {
   const user = useContext(AuthContext);
 

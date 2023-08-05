@@ -7,6 +7,10 @@ export interface PasswordDataProps {
   password: PasswordWithId;
 }
 
+/**
+ * A component to show the explicit info of the password
+ * @param password The object that contains the password info
+ */
 const PasswordData: FC<PasswordDataProps> = ({ password }) => {
   const [show, { toggle }] = useBoolean(false);
   const parsed = useMemo(() => {

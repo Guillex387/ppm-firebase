@@ -11,18 +11,31 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
+/**
+ * A class for obtain (async) the firebase vars (app, auth, ...)
+ * @class
+ */
 class FirebaseVars {
+  /**
+   * Gets the firebase app variable
+   */
   public async getApp(): Promise<FirebaseApp> {
     const { initializeApp } = await import('firebase/app');
     return initializeApp(firebaseConfig);
   }
 
+  /**
+   * Gets the firebase auth variable
+   */
   public async getAuth(): Promise<Auth> {
     const { getAuth } = await import('firebase/auth');
     const app = await this.getApp();
     return getAuth(app);
   }
 
+  /**
+   * Gets the firestore variable
+   */
   public async getFirestore(): Promise<Firestore> {
     const { getFirestore } = await import('firebase/firestore');
     const app = await this.getApp();
