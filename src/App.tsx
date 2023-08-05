@@ -9,7 +9,7 @@ import {
 import Login from './pages/Login';
 import theme from './theme';
 import NavBar from './components/NavBar';
-import { AuthContext } from './contexts';
+import AuthContext from './contexts/authCtx';
 import useAuth from './hooks/useAuth';
 
 const Passwords = lazy(() => import('./pages/Passwords'));
