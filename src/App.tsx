@@ -1,11 +1,12 @@
-import type { FC } from 'react';
+import { lazy, type FC, Suspense } from 'react';
 import { ChakraBaseProvider, Flex, Box } from '@chakra-ui/react';
+import Login from './pages/Login';
 import theme from './theme';
 import NavBar from './components/NavBar';
-import Login from './pages/Login';
-import Passwords from './pages/Passwords';
-import { AuthContext } from './lib/auth';
+import { AuthContext } from './contexts';
 import useAuth from './hooks/useAuth';
+
+const Passwords = lazy(() => import('./pages/Passwords'));
 
 const App: FC = () => {
   const { user, loading } = useAuth();
@@ -17,7 +18,9 @@ const App: FC = () => {
           <NavBar />
           <Box position="relative" w="full" h="full">
             {user ? (
-              <Passwords user={user} />
+              <Suspense>
+                <Passwords user={user} />
+              </Suspense>
             ) : (
               <Login initialLoading={loading} />
             )}

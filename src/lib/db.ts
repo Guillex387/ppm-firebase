@@ -1,14 +1,15 @@
 import type { User } from 'firebase/auth';
 import Crypto, { type Hash } from './crypto';
-import app from './firebase';
+import FirebaseVars from './firebase';
 import {
+  CollectionReference,
+  DocumentReference,
   addDoc,
   collection,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
-  getFirestore,
   setDoc,
 } from 'firebase/firestore';
 
@@ -31,13 +32,40 @@ export interface DocumentData {
 }
 
 class PasswordsDB {
-  private static db = getFirestore(app);
+  private static vars = new FirebaseVars();
   private static crypto = new Crypto<Password>();
 
   constructor(private masterKey: string, private user: User) {}
 
+  private async userDocument(): Promise<DocumentReference> {
+    return doc(
+      await PasswordsDB.vars.getFirestore(),
+      'user-data',
+      this.user.uid
+    );
+  }
+
+  private async userPasswords(): Promise<CollectionReference> {
+    return collection(
+      await PasswordsDB.vars.getFirestore(),
+      'user-data',
+      this.user.uid,
+      'passwords'
+    );
+  }
+
+  private async userPassword(id: string): Promise<DocumentReference> {
+    return doc(
+      await PasswordsDB.vars.getFirestore(),
+      'user-data',
+      this.user.uid,
+      'passwords',
+      id
+    );
+  }
+
   public async createDefaultDocument(): Promise<boolean> {
-    const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
+    const documentRef = await this.userDocument();
     const document = await getDoc(documentRef);
     if (document.exists()) return false;
     await setDoc(documentRef, {
@@ -47,15 +75,13 @@ class PasswordsDB {
   }
 
   public async isNewAccount(): Promise<boolean> {
-    const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
-    const document = await getDoc(documentRef);
+    const document = await getDoc(await this.userDocument());
     if (document.exists()) return false;
     return true;
   }
 
   public async verifyMasterKey(): Promise<boolean> {
-    const documentRef = doc(PasswordsDB.db, 'user-data', this.user.uid);
-    const document = await getDoc(documentRef);
+    const document = await getDoc(await this.userDocument());
     if (!document.exists()) return false;
     const { masterKeyHash } = document.data() as DocumentData;
     return await PasswordsDB.crypto.verifyHash(this.masterKey, masterKeyHash);
@@ -64,13 +90,7 @@ class PasswordsDB {
   public async getPasswords(): Promise<PasswordWithId[]> {
     const correctMasterKey = await this.verifyMasterKey();
     if (!correctMasterKey) throw new Error();
-    const passwordsRef = collection(
-      PasswordsDB.db,
-      'user-data',
-      this.user.uid,
-      'passwords'
-    );
-    const passwordsQuery = await getDocs(passwordsRef);
+    const passwordsQuery = await getDocs(await this.userPasswords());
     if (passwordsQuery.empty) return [];
     const passwords: PasswordWithId[] = passwordsQuery.docs.map((doc) => {
       const encryptedPassword = doc.data().data as string;
@@ -87,43 +107,23 @@ class PasswordsDB {
   }
 
   public async addPassword(password: Password): Promise<void> {
-    const passwordsRef = collection(
-      PasswordsDB.db,
-      'user-data',
-      this.user.uid,
-      'passwords'
-    );
     const correctMasterKey = await this.verifyMasterKey();
     if (!correctMasterKey) throw new Error();
-    await addDoc(passwordsRef, {
+    await addDoc(await this.userPasswords(), {
       data: PasswordsDB.crypto.encryptData(password, this.masterKey),
     });
   }
 
   public async updatePassword(id: string, password: Password) {
-    const passwordRef = doc(
-      PasswordsDB.db,
-      'user-data',
-      this.user.uid,
-      'passwords',
-      id
-    );
     const correctMasterKey = await this.verifyMasterKey();
     if (!correctMasterKey) throw new Error();
-    await setDoc(passwordRef, {
+    await setDoc(await this.userPassword(id), {
       data: PasswordsDB.crypto.encryptData(password, this.masterKey),
     });
   }
 
   public async deletePassword(id: string): Promise<void> {
-    const documentRef = doc(
-      PasswordsDB.db,
-      'user-data',
-      this.user.uid,
-      'passwords',
-      id
-    );
-    await deleteDoc(documentRef);
+    await deleteDoc(await this.userPassword(id));
   }
 }
 

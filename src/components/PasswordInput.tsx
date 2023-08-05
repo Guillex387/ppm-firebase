@@ -16,7 +16,7 @@ const PasswordInput: FC<InputProps> = (props) => {
       <Input
         pr="4.5rem"
         type={show ? 'text' : 'password'}
-        placeholder="Enter password"
+        placeholder="password"
         {...props}
       />
       <InputRightElement width="4.5rem">

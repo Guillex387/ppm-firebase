@@ -1,4 +1,6 @@
-import { initializeApp } from 'firebase/app';
+import type { FirebaseApp } from 'firebase/app';
+import type { Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
@@ -9,6 +11,23 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+class FirebaseVars {
+  public async getApp(): Promise<FirebaseApp> {
+    const { initializeApp } = await import('firebase/app');
+    return initializeApp(firebaseConfig);
+  }
 
-export default app;
+  public async getAuth(): Promise<Auth> {
+    const { getAuth } = await import('firebase/auth');
+    const app = await this.getApp();
+    return getAuth(app);
+  }
+
+  public async getFirestore(): Promise<Firestore> {
+    const { getFirestore } = await import('firebase/firestore');
+    const app = await this.getApp();
+    return getFirestore(app);
+  }
+}
+
+export default FirebaseVars;

@@ -8,9 +8,8 @@ import {
   useToast,
   MenuGroup,
 } from '@chakra-ui/react';
-import { type User, sendPasswordResetEmail, signOut } from 'firebase/auth';
-import auth from '../lib/auth';
-import PasswordsDB from '../lib/db';
+import type { User } from 'firebase/auth';
+import AuthManager from '../lib/auth';
 
 export interface UserMenuProps {
   user: User;
@@ -23,8 +22,9 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   });
 
   const logout = async () => {
+    const manager = new AuthManager();
     try {
-      await signOut(auth);
+      await manager.signOut();
     } catch (error) {
       toast({
         title: 'Failed to logout',
@@ -34,8 +34,9 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
 
   const passwordReset = async () => {
     if (!user || !user.email) return;
+    const manager = new AuthManager();
     try {
-      await sendPasswordResetEmail(auth, user.email);
+      await manager.sendPasswordReset(user.email);
       toast({
         title: 'Password reset sended',
         status: 'success',
@@ -50,7 +51,8 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   const createMasterKey = async () => {
     const masterKey = prompt('Put the masterkey');
     if (!masterKey || !user) return;
-    const db = new PasswordsDB(masterKey, user);
+    const PasswordsDB = await import('../lib/db');
+    const db = new PasswordsDB.default(masterKey, user);
     try {
       const created = await db.createDefaultDocument();
       if (!created) {

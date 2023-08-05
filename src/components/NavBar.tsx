@@ -1,7 +1,8 @@
-import { type FC, useContext } from 'react';
-import UserMenu from './UserMenu';
+import { type FC, useContext, lazy, Suspense } from 'react';
 import { Heading, Box, Flex, Spacer, Center } from '@chakra-ui/react';
-import { AuthContext } from '../lib/auth';
+import { AuthContext } from '../contexts';
+
+const UserMenu = lazy(() => import('./UserMenu'));
 
 const NavBar: FC = () => {
   const user = useContext(AuthContext);
@@ -15,7 +16,11 @@ const NavBar: FC = () => {
           </Heading>
         </Center>
         <Spacer />
-        {user && <UserMenu user={user} />}
+        {user && (
+          <Suspense>
+            <UserMenu user={user} />
+          </Suspense>
+        )}
       </Flex>
     </Box>
   );

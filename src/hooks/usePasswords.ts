@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import PasswordsDB from '../lib/db';
+import type PasswordsDB from '../lib/db';
 import { useRef, useState, useMemo } from 'react';
 import { useToast } from '@chakra-ui/react';
 import type { Password, PasswordWithId } from '../lib/db';
@@ -30,7 +30,8 @@ const usePasswords = (user: User) => {
   const unlock = async (masterKey: string) => {
     if (db.current) return;
     setLoading(true);
-    const newDB = new PasswordsDB(masterKey, user);
+    const PasswordsDB = await import('../lib/db');
+    const newDB = new PasswordsDB.default(masterKey, user);
     try {
       const correctMasterKey = await newDB.verifyMasterKey();
       if (!correctMasterKey) {

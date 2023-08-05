@@ -8,22 +8,18 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import PasswordInput from '../components/PasswordInput';
-import {
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import auth from '../lib/auth';
+import AuthManager from '../lib/auth';
 
 interface LoginProps {
   initialLoading: boolean;
 }
 
 const Login: FC<LoginProps> = ({ initialLoading }) => {
+  const [loading, setLoading] = useState(false);
   const toast = useToast({
     status: 'error',
     isClosable: true,
   });
-  const [loading, setLoading] = useState(false);
 
   useLayoutEffect(() => {
     setLoading(initialLoading);
@@ -35,8 +31,9 @@ const Login: FC<LoginProps> = ({ initialLoading }) => {
     const formData = new FormData(ev.target as HTMLFormElement);
     const { email, password } = Object.fromEntries(formData);
     if (email instanceof File || password instanceof File) return;
+    const manager = new AuthManager();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await manager.signIn(email, password);
     } catch (error) {
       toast({
         title: 'Incorrect email or password',
@@ -52,8 +49,9 @@ const Login: FC<LoginProps> = ({ initialLoading }) => {
       setLoading(false);
       return;
     }
+    const manager = new AuthManager();
     try {
-      await sendPasswordResetEmail(auth, email);
+      await manager.sendPasswordReset(email);
       toast({
         title: 'Password reset sended',
         status: 'success',
