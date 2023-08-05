@@ -84,7 +84,7 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
         <MenuGroup title={user.email || undefined}>
           <MenuItem onClick={passwordReset}>Password reset</MenuItem>
           <MenuItem onClick={createMasterKey}>Create masterkey</MenuItem>
-          <MenuItem color="red.500" onClick={logout}>
+          <MenuItem color="red.300" onClick={logout}>
             Logout
           </MenuItem>
         </MenuGroup>
