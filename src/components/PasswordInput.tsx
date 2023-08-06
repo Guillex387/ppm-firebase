@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { forwardRef, type FC, type Ref } from 'react';
 import {
   Input,
   InputGroup,
@@ -8,10 +8,14 @@ import {
   InputProps,
 } from '@chakra-ui/react';
 
+export interface PasswordInputProps extends InputProps {
+  ref?: Ref<HTMLInputElement>;
+}
+
 /**
  * A classic password text input
  */
-const PasswordInput: FC<InputProps> = (props) => {
+const PasswordInput: FC<PasswordInputProps> = forwardRef((props, ref) => {
   const [show, { toggle }] = useBoolean(false);
 
   return (
@@ -20,6 +24,7 @@ const PasswordInput: FC<InputProps> = (props) => {
         pr="4.5rem"
         type={show ? 'text' : 'password'}
         placeholder="password"
+        ref={ref}
         {...props}
       />
       <InputRightElement width="4.5rem">
@@ -29,6 +34,6 @@ const PasswordInput: FC<InputProps> = (props) => {
       </InputRightElement>
     </InputGroup>
   );
-};
+});
 
 export default PasswordInput;

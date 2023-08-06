@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import PasswordInput from '../components/PasswordInput';
 import AuthManager from '../lib/auth';
+import ComponentWithPrompt from '../components/ComponentWithPrompt';
 
 interface LoginProps {
   initialLoading: boolean;
@@ -46,13 +47,8 @@ const Login: FC<LoginProps> = ({ initialLoading }) => {
     setLoading(false);
   };
 
-  const forgotPassword = async () => {
+  const forgotPassword = async (email: string) => {
     setLoading(true);
-    const email = prompt('Put the email for reset your password');
-    if (!email) {
-      setLoading(false);
-      return;
-    }
     const manager = new AuthManager();
     try {
       await manager.sendPasswordReset(email);
@@ -87,17 +83,18 @@ const Login: FC<LoginProps> = ({ initialLoading }) => {
           placeholder="email"
         />
         <PasswordInput isDisabled={loading} name="password" />
-        <Button
-          variant="link"
-          alignSelf="start"
-          size="sm"
-          paddingLeft={2}
-          color="gray.400"
-          isDisabled={loading}
-          onClick={forgotPassword}
-        >
-          Forgot your password?
-        </Button>
+        <ComponentWithPrompt onClick={forgotPassword} title="Enter your email">
+          <Button
+            variant="link"
+            alignSelf="start"
+            size="sm"
+            paddingLeft={2}
+            color="gray.400"
+            isDisabled={loading}
+          >
+            Forgot your password?
+          </Button>
+        </ComponentWithPrompt>
         <Button
           type="submit"
           colorScheme="blue"

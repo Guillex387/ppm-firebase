@@ -16,6 +16,7 @@ import type { Password, PasswordWithId } from '../lib/db';
 import PasswordData from './PasswordData';
 import { formatDate, passwordScore } from '../utils';
 import PasswordDialog from './PasswordDialog';
+import ComponentWithConfirm from './ComponentWithConfirm';
 
 export interface PasswordBlockProps {
   password: PasswordWithId;
@@ -27,7 +28,8 @@ export interface PasswordBlockProps {
  * A function that returns the color of the security bar
  * - `red` for scores between 0 and 49
  * - `orange` for scores between 50 and 74
- * - `green` for scores between 75 and 100
+ * - `green` for scores between 75 and 99
+ * - `teal` for the max score 100
  * @param {number} score The security level of the password
  * @returns
  */
@@ -50,15 +52,9 @@ const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove, edit }) => {
     return passwordScore(password.password);
   }, [password.password]);
 
-  const handleRemove = () => {
-    const confirmation = confirm('Are you sure?, this data is not retrivable');
-    if (!confirmation) return;
-    remove(password.id);
-  };
+  const handleRemove = () => remove(password.id);
 
-  const handleEdit = (newPassword: Password) => {
-    edit(password.id, newPassword);
-  };
+  const handleEdit = (newPassword: Password) => edit(password.id, newPassword);
 
   return (
     <>
@@ -98,9 +94,14 @@ const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove, edit }) => {
             >
               Edit
             </Button>
-            <Button colorScheme="red" variant="outline" onClick={handleRemove}>
-              Delete
-            </Button>
+            <ComponentWithConfirm
+              onClick={handleRemove}
+              body="Are you sure?, this data is not retrivable"
+            >
+              <Button colorScheme="red" variant="outline">
+                Delete
+              </Button>
+            </ComponentWithConfirm>
           </Flex>
         </Collapse>
       </Box>

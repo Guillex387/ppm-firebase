@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import type { User } from 'firebase/auth';
 import AuthManager from '../lib/auth';
+import ComponentWithConfirm from './ComponentWithConfirm';
 
 export interface UserMenuProps {
   user: User;
@@ -84,9 +85,9 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
         <MenuGroup title={user.email || undefined}>
           <MenuItem onClick={passwordReset}>Password reset</MenuItem>
           <MenuItem onClick={createMasterKey}>Create masterkey</MenuItem>
-          <MenuItem color="red.300" onClick={logout}>
-            Logout
-          </MenuItem>
+          <ComponentWithConfirm onClick={logout}>
+            <MenuItem color="red.300">Logout</MenuItem>
+          </ComponentWithConfirm>
         </MenuGroup>
       </MenuList>
     </Menu>
