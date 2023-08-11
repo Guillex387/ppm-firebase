@@ -11,6 +11,7 @@ import {
 import type { User } from 'firebase/auth';
 import AuthManager from '../lib/auth';
 import ComponentWithConfirm from './ComponentWithConfirm';
+import ComponentWithPrompt from './ComponentWithPrompt';
 
 export interface UserMenuProps {
   user: User;
@@ -53,8 +54,7 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
     }
   };
 
-  const createMasterKey = async () => {
-    const masterKey = prompt('Put the masterkey');
+  const createMasterKey = async (masterKey: string) => {
     if (!masterKey || !user) return;
     const PasswordsDB = await import('../lib/db');
     const db = new PasswordsDB.default(masterKey, user);
@@ -84,8 +84,14 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
       <MenuList>
         <MenuGroup title={user.email || undefined}>
           <MenuItem onClick={passwordReset}>Password reset</MenuItem>
-          <MenuItem onClick={createMasterKey}>Create masterkey</MenuItem>
-          <ComponentWithConfirm onClick={logout}>
+          <ComponentWithPrompt
+            type="password"
+            title="Masterkey"
+            action={createMasterKey}
+          >
+            <MenuItem>Create masterkey</MenuItem>
+          </ComponentWithPrompt>
+          <ComponentWithConfirm action={logout}>
             <MenuItem color="red.300">Logout</MenuItem>
           </ComponentWithConfirm>
         </MenuGroup>

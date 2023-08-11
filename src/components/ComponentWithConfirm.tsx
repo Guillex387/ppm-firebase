@@ -12,31 +12,38 @@ import {
 
 export interface ComponentWithConfirmProps {
   children: ReactNode;
-  onClick: () => any;
+  action: () => any;
   title?: string;
   body?: string;
+  disabled?: boolean;
 }
 
 /**
  * A wrapper that display a confirmation
  * to do an action of a component
  * @param children The react child
- * @param onClick The action to perform
+ * @param action The action to perform
  * @param title The title of the modal (Optional)
  * @param description The description of the modal (Optional)
+ * @param disabled A state for disable the modal (Optional)
  */
 const ComponentWithConfirm: FC<ComponentWithConfirmProps> = (props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
 
+  const handleOpen = () => {
+    if (props.disabled) return;
+    onOpen();
+  };
+
   const handleClick = () => {
     onClose();
-    props.onClick();
+    props.action();
   };
 
   return (
     <>
-      <div onClick={onOpen}>{props.children}</div>
+      <div onClick={handleOpen}>{props.children}</div>
       <AlertDialog
         leastDestructiveRef={cancelRef}
         isOpen={isOpen}

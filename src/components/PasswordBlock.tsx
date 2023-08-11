@@ -95,8 +95,8 @@ const PasswordBlock: FC<PasswordBlockProps> = ({ password, remove, edit }) => {
               Edit
             </Button>
             <ComponentWithConfirm
-              onClick={handleRemove}
-              body="Are you sure?, this data is not retrivable"
+              action={handleRemove}
+              body="Are you sure?, this data is not retrievable"
             >
               <Button colorScheme="red" variant="outline">
                 Delete

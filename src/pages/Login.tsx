@@ -83,7 +83,7 @@ const Login: FC<LoginProps> = ({ initialLoading }) => {
           placeholder="email"
         />
         <PasswordInput isDisabled={loading} name="password" />
-        <ComponentWithPrompt onClick={forgotPassword} title="Enter your email">
+        <ComponentWithPrompt action={forgotPassword} title="Enter your email">
           <Button
             variant="link"
             alignSelf="start"

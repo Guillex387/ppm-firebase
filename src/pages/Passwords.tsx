@@ -15,6 +15,7 @@ import usePasswords from '../hooks/usePasswords';
 import type { User } from 'firebase/auth';
 import PasswordDialog from '../components/PasswordDialog';
 import Container from '../components/Container';
+import Unlock from '../components/Unlock';
 
 export interface PasswordsProps {
   user: User;
@@ -38,29 +39,17 @@ const Passwords: FC<PasswordsProps> = ({ user }) => {
   } = usePasswords(user);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleUnlock = async () => {
-    if (locked) {
-      const masterKey = prompt('Master key');
-      if (!masterKey) return;
-      await unlock(masterKey);
-      return;
-    }
-    lock();
-  };
-
   return (
     <>
       <Center>
         <VStack w="60vw" minW="20rem" mt={10} pb={10}>
           <Flex w="full" gap={2} alignItems="center">
-            <Button
-              colorScheme="blue"
-              variant="outline"
-              isDisabled={loading}
-              onClick={handleUnlock}
-            >
-              {locked ? 'Unlock' : 'Lock'}
-            </Button>
+            <Unlock
+              locked={locked}
+              disabled={loading}
+              unlockAction={unlock}
+              lockAction={lock}
+            />
             <Spacer />
             <LightMode>
               <Button
