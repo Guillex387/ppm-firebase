@@ -109,3 +109,6 @@ dist
 
 # npm
 package-lock.json
+
+# Vscode settings
+.vscode/
