@@ -35,7 +35,7 @@ const usePasswords = (user: User) => {
     if (db.current) return;
     setLoading(true);
     const PasswordsDB = await import('../lib/db');
-    const newDB = new PasswordsDB.default(masterKey, user);
+    const newDB = new PasswordsDB.default(masterKey, user.uid);
     try {
       const correctMasterKey = await newDB.verifyMasterKey();
       if (!correctMasterKey) {

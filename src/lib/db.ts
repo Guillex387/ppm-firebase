@@ -1,4 +1,3 @@
-import type { User } from 'firebase/auth';
 import Crypto, { type Hash } from './crypto';
 import FirebaseVars from './firebase';
 import {
@@ -43,20 +42,16 @@ class PasswordsDB {
    * Constructor of the database manager
    * @constructor
    * @param masterKey
-   * @param user
+   * @param userId
    */
-  constructor(private masterKey: string, private user: User) {}
+  constructor(private masterKey: string, private userId: string) {}
 
   /**
    * A method for obtain the user document reference
    * @returns The user document reference
    */
   private async userDocument(): Promise<DocumentReference> {
-    return doc(
-      await PasswordsDB.vars.getFirestore(),
-      'user-data',
-      this.user.uid
-    );
+    return doc(await PasswordsDB.vars.getFirestore(), 'user-data', this.userId);
   }
 
   /**
@@ -67,7 +62,7 @@ class PasswordsDB {
     return collection(
       await PasswordsDB.vars.getFirestore(),
       'user-data',
-      this.user.uid,
+      this.userId,
       'passwords'
     );
   }
@@ -80,7 +75,7 @@ class PasswordsDB {
     return doc(
       await PasswordsDB.vars.getFirestore(),
       'user-data',
-      this.user.uid,
+      this.userId,
       'passwords',
       id
     );

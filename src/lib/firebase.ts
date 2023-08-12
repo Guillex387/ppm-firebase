@@ -11,15 +11,23 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
+interface VarsCache {
+  app?: FirebaseApp;
+  auth?: Auth;
+  firestore?: Firestore;
+}
+
 /**
  * A class for obtain (async) the firebase vars (app, auth, ...)
  * @class
  */
 class FirebaseVars {
+  private static cache: VarsCache = {};
   /**
    * Gets the firebase app variable
    */
   public async getApp(): Promise<FirebaseApp> {
+    if (FirebaseVars.cache.app) return FirebaseVars.cache.app;
     const { initializeApp } = await import('firebase/app');
     return initializeApp(firebaseConfig);
   }
@@ -28,6 +36,7 @@ class FirebaseVars {
    * Gets the firebase auth variable
    */
   public async getAuth(): Promise<Auth> {
+    if (FirebaseVars.cache.auth) return FirebaseVars.cache.auth;
     const { getAuth } = await import('firebase/auth');
     const app = await this.getApp();
     return getAuth(app);
@@ -37,6 +46,7 @@ class FirebaseVars {
    * Gets the firestore variable
    */
   public async getFirestore(): Promise<Firestore> {
+    if (FirebaseVars.cache.firestore) return FirebaseVars.cache.firestore;
     const { getFirestore } = await import('firebase/firestore');
     const app = await this.getApp();
     return getFirestore(app);

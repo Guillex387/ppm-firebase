@@ -57,18 +57,18 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   const createMasterKey = async (masterKey: string) => {
     if (!masterKey || !user) return;
     const PasswordsDB = await import('../lib/db');
-    const db = new PasswordsDB.default(masterKey, user);
+    const db = new PasswordsDB.default(masterKey, user.uid);
     try {
       const created = await db.createDefaultDocument();
       if (!created) {
         toast({
-          title: 'The masterkey already exists',
+          title: 'The master key already exists',
         });
         return;
       }
     } catch (error) {
       toast({
-        title: 'Error making the masterkey',
+        title: 'Error making the master key',
       });
       return;
     }
@@ -86,10 +86,10 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
           <MenuItem onClick={passwordReset}>Password reset</MenuItem>
           <ComponentWithPrompt
             type="password"
-            title="Masterkey"
+            title="Master key"
             action={createMasterKey}
           >
-            <MenuItem>Create masterkey</MenuItem>
+            <MenuItem>Create master key</MenuItem>
           </ComponentWithPrompt>
           <ComponentWithConfirm action={logout}>
             <MenuItem color="red.300">Logout</MenuItem>
