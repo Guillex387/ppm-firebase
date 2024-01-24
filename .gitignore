@@ -107,8 +107,5 @@ dist
 .firebaserc
 .firebase/
 
-# npm
-package-lock.json
-
 # Vscode settings
 .vscode/
