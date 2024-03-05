@@ -9,7 +9,7 @@ import {
   Input,
   useDisclosure,
 } from '@chakra-ui/react';
-import { type FC, type ReactNode, useRef } from 'react';
+import { type FC, type ReactNode, useRef, useEffect, FormEvent } from 'react';
 import PasswordInput from './PasswordInput';
 
 export interface ComponentWithPromptProps {
@@ -44,7 +44,8 @@ const ComponentWithPrompt: FC<ComponentWithPromptProps> = (props) => {
     onClose();
   };
 
-  const handleClick = () => {
+  const handleSubmit = (ev: FormEvent) => {
+    ev.preventDefault();
     if (!inputRef.current || !inputRef.current.value) return;
     const res = inputRef.current.value;
     inputRef.current.value = '';
@@ -61,7 +62,7 @@ const ComponentWithPrompt: FC<ComponentWithPromptProps> = (props) => {
         onClose={handleClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent as="form" onSubmit={handleSubmit}>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               {props.title || 'Prompt'}
             </AlertDialogHeader>
@@ -74,7 +75,7 @@ const ComponentWithPrompt: FC<ComponentWithPromptProps> = (props) => {
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button colorScheme="blue" onClick={handleClick} ml={3}>
+              <Button type="submit" colorScheme="blue" ml={3}>
                 OK
               </Button>
             </AlertDialogFooter>
